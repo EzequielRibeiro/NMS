@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">NMS Decoder</string>
+    <string name="title_name">NMS Portal Decoder</string>
+    <string name="tab_text_1">DECODER</string>
+    <string name="tab_text_2">GLYPHS</string>
+    <string name="tab_text_3">PORTALS</string>
+    <string name="banner_ad_unit_id">ca-app-pub-0822808376839371/1812989947</string>
+    <string name="inters_ad_unit_id">ca-app-pub-0822808376839371/8813512564</string>
+
+</resources>
