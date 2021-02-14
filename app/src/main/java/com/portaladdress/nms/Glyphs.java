@@ -1,22 +1,44 @@
 package com.portaladdress.nms;
 
-import android.util.Log;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import static java.lang.Integer.parseInt;
 
 public class Glyphs {
 
     final int bigMod =     0x1000;
     final int smallMod =   0x100;
+    private String glyphsCode;
+    private String comments;
+    private int id;
 
     private String shiftModUpFill(String val, int shift, int mod) {
         final int i = ((parseInt(val, 16) + shift) % mod);
 
         return Integer.toHexString(i);
 
+    }
+
+    public void setGlyphsCode(String glyphsCode){
+        this.glyphsCode = glyphsCode;
+    }
+
+    public String getGlyphsCode(){
+        return glyphsCode;
+    }
+
+    public void setComments(String comments){
+        this.comments = comments;
+    }
+
+    public String getComments(){
+        return comments;
+    }
+
+    public void setId(int id){
+        this.id = id;
+    }
+
+    public int getId(){
+        return id;
     }
 
     private String[] coordsFormated(String coords) {

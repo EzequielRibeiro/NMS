@@ -1,6 +1,7 @@
 package com.portaladdress.nms;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -27,8 +28,9 @@ import static android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
 public class SaveImageGlyphs {
 
 
-    public void getPrint(LinearLayout content, Activity activity) throws IOException {
+    public void getPrint(LinearLayout content, Context context) throws IOException {
 
+        Activity activity = (Activity) context;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault());
         String currentDateandTime = sdf.format(new Date());
 
@@ -41,7 +43,7 @@ public class SaveImageGlyphs {
                 file.mkdirs();
 
             }
-            f = new File(file.getAbsolutePath() + file.separator + "glyphs_".concat(currentDateandTime) + ".png");
+            f = new File(file.getAbsolutePath() + file.separator + "glyphs.png");
         }
         FileOutputStream ostream = new FileOutputStream(f);
         bitmap.compress(Bitmap.CompressFormat.PNG, 10, ostream);
@@ -49,11 +51,16 @@ public class SaveImageGlyphs {
 
         Uri uri = FileProvider.getUriForFile(activity, activity.getBaseContext().
                 getApplicationContext().getPackageName() + ".com.portaladdress.provider.ImageFileProvider", f);
-        Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
-        intent.setFlags(FLAG_GRANT_READ_URI_PERMISSION);
-        intent.setDataAndType(uri, "image/*");
-        activity.startActivity(intent);
-        Log.e("path", f.getAbsolutePath());
+       // Intent intent = new Intent(Intent.ACTION_SENDTO);
+       // intent.setFlags(FLAG_GRANT_READ_URI_PERMISSION);
+       // intent.setDataAndType(uri, "image/*");
+       // activity.startActivity(intent);
+
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        shareIntent.setType("image/*");
+        activity.startActivity(Intent.createChooser(shareIntent, "Send to:"));
 
     } 
  

@@ -34,7 +34,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
             case 1:
                 return GlyphsFragment.newInstance(position + 1);
             case 2:
-                return PortalFragment.newInstance(position + 1);
+                return SaveFragment.newInstance(position + 1,mContext);
         }
         return PlaceholderFragment.newInstance(position + 1);
 

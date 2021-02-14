@@ -1,5 +1,6 @@
 package com.portaladdress.nms.ui.main;
 
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -37,7 +38,7 @@ public class GlyphsFragment extends Fragment implements View.OnClickListener {
     private LinearLayout linearLayout;
     private ImageButton imageButton0,imageButton1,imageButton2,imageButton3,imageButton4,imageButton5,imageButton6,imageButton7,imageButton8,imageButton9,
     imageButtonA,imageButtonB,imageButtonC,imageButtonD,imageButtonE,imageButtonF;
-    private Button buttonResetGlyphs,buttonShareGlyphs;
+    private Button buttonResetGlyphs,buttonShareGlyphs,buttonSaveGlyphs;
     private TextView textViewGlyphsCode, textViewGlyphsAddress;
 
     public static GlyphsFragment newInstance(int index) {
@@ -56,6 +57,8 @@ public class GlyphsFragment extends Fragment implements View.OnClickListener {
         linearLayout = view.findViewById(R.id.linearLayoutGlyphs);
         textViewGlyphsCode = view.findViewById(R.id.textViewGlyphsCode);
         buttonResetGlyphs = view.findViewById(R.id.buttonResetGlyphs);
+        buttonShareGlyphs = view.findViewById(R.id.buttonShareGlyphs);
+        buttonSaveGlyphs  = view.findViewById(R.id.buttonSaveGlyphs);
 
         buttonResetGlyphs.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,7 +70,7 @@ public class GlyphsFragment extends Fragment implements View.OnClickListener {
                 count = 0;
             }
         });
-        buttonShareGlyphs = view.findViewById(R.id.buttonShareGlyphs);
+
         buttonShareGlyphs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,6 +84,16 @@ public class GlyphsFragment extends Fragment implements View.OnClickListener {
                 }
             }
         });
+
+        buttonSaveGlyphs.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(textViewGlyphsCode.length() == 12) {
+                    showDialog();
+                }
+            }
+        });
+
         textViewGlyphsAddress = view.findViewById(R.id.textViewGlyphsAddress);
         imageButton0 = view.findViewById(R.id.imageButton0);
         imageButton0.setOnClickListener(this);
@@ -145,6 +158,11 @@ public class GlyphsFragment extends Fragment implements View.OnClickListener {
         super.onActivityCreated(savedInstanceState);
         mViewModel = new ViewModelProvider(this).get(GlyphsViewModel.class);
         // TODO: Use the ViewModel
+    }
+
+    private void showDialog() {
+        DialogFragment newFragment = PlaceholderFragment.DialogSaveGlyphs.newInstance("Save glyphs to the Portal",textViewGlyphsCode.getText().toString());
+        newFragment.show(getFragmentManager(), "dialog");
     }
 
     public void onClick(View v) {

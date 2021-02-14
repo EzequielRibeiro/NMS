@@ -1,5 +1,9 @@
 package com.portaladdress.nms.ui.main;
 
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.text.TextWatcher;
 import android.os.Bundle;
 import android.text.Editable;
@@ -7,14 +11,20 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -23,6 +33,8 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.RequestConfiguration;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputEditText;
+import com.portaladdress.nms.DBAdapter;
 import com.portaladdress.nms.Glyphs;
 import com.portaladdress.nms.R;
 import com.portaladdress.nms.SaveImageGlyphs;
@@ -35,7 +47,7 @@ public class PlaceholderFragment extends Fragment {
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static final String MASK = "####:####:####:####";
     private EditText textView18,textView20;
-    private Button resetButton,buttonShareGlyphs;
+    private Button resetButton,buttonShareGlyphs,buttonSaveMain;
     private View root;
     private static boolean isUpdating, editTextBox1,editTextBox2,toUpperCase = true;
     private static String old = "";
@@ -76,6 +88,7 @@ public class PlaceholderFragment extends Fragment {
         textView18 = root.findViewById(R.id.textViewGlyphsCode);
         textView20 = root.findViewById(R.id.textViewGlyphsAddress);
         buttonShareGlyphs = root.findViewById(R.id.buttonShareGlyphs);
+        buttonSaveMain    = root.findViewById(R.id.buttonSaveMain);
         mAdView = root.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         RequestConfiguration requestConfiguration = new RequestConfiguration.Builder().setTestDeviceIds(Arrays.asList("DB530A1BBBDBFE8567328113528A19EF")).build();
@@ -88,10 +101,20 @@ public class PlaceholderFragment extends Fragment {
 
                 try {
                     if(linearLayoutGlyphsMain.getChildCount() == 12)
+
                         new SaveImageGlyphs().getPrint(linearLayoutGlyphsMain,getActivity());
 
                 } catch (IOException e) {
                     e.printStackTrace();
+                }
+            }
+        });
+
+        buttonSaveMain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(textView18.length() == 12) {
+                     showDialog();
                 }
             }
         });
@@ -129,6 +152,7 @@ public class PlaceholderFragment extends Fragment {
 
                 if (s.length() == 19 && editTextBox1) {
                     setCoordinates(String.valueOf(s));
+                    hideKeyboard(getActivity());
                 }
 
             }
@@ -153,7 +177,8 @@ public class PlaceholderFragment extends Fragment {
                     String result = glyphs.getHexCoords(String.valueOf(s));
                     if (!textView20.getText().toString().equals(result))
                           textView20.setText(result);
-                    getGlyphs(s);
+                    getGlyphs(s,linearLayoutGlyphsMain,getActivity());
+                    hideKeyboard(getActivity());
                 }
             }
             @Override
@@ -186,6 +211,15 @@ public class PlaceholderFragment extends Fragment {
             }
         });
         return root;
+    }
+
+    public void hideKeyboard(FragmentActivity fragmentActivity){
+        InputMethodManager inputManager = (InputMethodManager)
+                fragmentActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+
+    if(inputManager != null)
+        inputManager.hideSoftInputFromWindow(fragmentActivity.getCurrentFocus().getWindowToken(),
+                InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
    public static void applyMask(View v, CharSequence s){
@@ -225,7 +259,7 @@ public class PlaceholderFragment extends Fragment {
         String result;
         Glyphs glyphs = new Glyphs();
         result = glyphs.getCoordsDetails(coordinates);
-        getGlyphs(result);
+        getGlyphs(result,linearLayoutGlyphsMain,getActivity());
         if (result.contains("Incorrect")) {
             Snackbar.make(root, result, Snackbar.LENGTH_LONG)
                     .setAction(result, null).show();
@@ -239,14 +273,25 @@ public class PlaceholderFragment extends Fragment {
 
 
     }
+    public static void insertCodeGlyphs(String code, String comments,Context context){
 
-    public void getGlyphs(CharSequence charSequence) {
+        DBAdapter dbAdapter = new DBAdapter(context);
+
+        if(dbAdapter.insertGlyphs(code,comments) > 0){
+            dbAdapter.close();
+            Toast.makeText(context, "Save", Toast.LENGTH_SHORT).show();
+
+        }
+
+    }
+
+    public static void getGlyphs(CharSequence charSequence, LinearLayout linearLayout, Context context) {
 
         ImageView imageView;
 
-        if(linearLayoutGlyphsMain.getChildCount() > 0) {
-            linearLayoutGlyphsMain.removeAllViews();
-            linearLayoutGlyphsMain.destroyDrawingCache();
+        if(linearLayout.getChildCount() > 0) {
+            linearLayout.removeAllViews();
+            linearLayout.destroyDrawingCache();
         }
 
         for (int i = 0 ; i < charSequence.length() ; i++) {
@@ -254,130 +299,130 @@ public class PlaceholderFragment extends Fragment {
             switch (charSequence.charAt(i)) {
                 case '0':
                     //nameGlyphs += "sunset";
-                    imageView = new ImageView(getActivity());
+                    imageView = new ImageView(context);
                     imageView.setLayoutParams(new LinearLayout.LayoutParams(45, 45));
-                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.zero_sunset));
-                    linearLayoutGlyphsMain.addView(imageView);
+                    imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.zero_sunset));
+                    linearLayout.addView(imageView);
 
                     break;
                 case '1':
                     //nameGlyphs += "bird";
-                    imageView = new ImageView(getActivity());
+                    imageView = new ImageView(context);
                     imageView.setLayoutParams(new LinearLayout.LayoutParams(45, 45));
-                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.um_bird));
-                    linearLayoutGlyphsMain.addView(imageView);
+                    imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.um_bird));
+                    linearLayout.addView(imageView);
 
                     break;
                 case '2':
                     //nameGlyphs += "face";
-                    imageView = new ImageView(getActivity());
+                    imageView = new ImageView(context);
                     imageView.setLayoutParams(new LinearLayout.LayoutParams(45, 45));
-                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.dois_face));
-                    linearLayoutGlyphsMain.addView(imageView);
+                    imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.dois_face));
+                    linearLayout.addView(imageView);
 
                     break;
                 case '3':
                     //nameGlyphs += "diplo";
-                    imageView = new ImageView(getActivity());
+                    imageView = new ImageView(context);
                     imageView.setLayoutParams(new LinearLayout.LayoutParams(45, 45));
-                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.tres_diplo));
-                    linearLayoutGlyphsMain.addView(imageView);
+                    imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.tres_diplo));
+                    linearLayout.addView(imageView);
 
                     break;
                 case '4':
                     //nameGlyphs += "eclipse";
-                    imageView = new ImageView(getActivity());
+                    imageView = new ImageView(context);
                     imageView.setLayoutParams(new LinearLayout.LayoutParams(45, 45));
-                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.quatro_eclipse));
-                    linearLayoutGlyphsMain.addView(imageView);
+                    imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.quatro_eclipse));
+                    linearLayout.addView(imageView);
 
                     break;
                 case '5':
                     //nameGlyphs += "balloon";
-                    imageView = new ImageView(getActivity());
+                    imageView = new ImageView(context);
                     imageView.setLayoutParams(new LinearLayout.LayoutParams(45, 45));
-                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.cinco_ballon));
-                    linearLayoutGlyphsMain.addView(imageView);
+                    imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.cinco_ballon));
+                    linearLayout.addView(imageView);
 
                     break;
                 case '6':
                     //nameGlyphs += "boat";
-                    imageView = new ImageView(getActivity());
+                    imageView = new ImageView(context);
                     imageView.setLayoutParams(new LinearLayout.LayoutParams(45, 45));
-                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.seis_boat));
-                    linearLayoutGlyphsMain.addView(imageView);
+                    imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.seis_boat));
+                    linearLayout.addView(imageView);
 
                     break;
                 case '7':
                     //nameGlyphs += "bug";
-                    imageView = new ImageView(getActivity());
+                    imageView = new ImageView(context);
                     imageView.setLayoutParams(new LinearLayout.LayoutParams(45, 45));
-                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.sete_bug));
-                    linearLayoutGlyphsMain.addView(imageView);
+                    imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.sete_bug));
+                    linearLayout.addView(imageView);
 
                     break;
                 case '8':
                     //nameGlyphs += "dragonfly";
-                    imageView = new ImageView(getActivity());
+                    imageView = new ImageView(context);
                     imageView.setLayoutParams(new LinearLayout.LayoutParams(45, 45));
-                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.oito_dragonfly));
-                    linearLayoutGlyphsMain.addView(imageView);
+                    imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.oito_dragonfly));
+                    linearLayout.addView(imageView);
 
                     break;
                 case '9':
                     //nameGlyphs += "galaxy";
-                    imageView = new ImageView(getActivity());
+                    imageView = new ImageView(context);
                     imageView.setLayoutParams(new LinearLayout.LayoutParams(45, 45));
-                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.nove_galaxy));
-                    linearLayoutGlyphsMain.addView(imageView);
+                    imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.nove_galaxy));
+                    linearLayout.addView(imageView);
 
                     break;
                 case 'A':
                     //nameGlyphs += "voxel";
-                    imageView = new ImageView(getActivity());
+                    imageView = new ImageView(context);
                     imageView.setLayoutParams(new LinearLayout.LayoutParams(45, 45));
-                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.a_voxel));
-                    linearLayoutGlyphsMain.addView(imageView);
+                    imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.a_voxel));
+                    linearLayout.addView(imageView);
 
                     break;
                 case 'B':
                     //nameGlyphs += "fish";
-                    imageView = new ImageView(getActivity());
+                    imageView = new ImageView(context);
                     imageView.setLayoutParams(new LinearLayout.LayoutParams(45, 45));
-                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.b_fish));
-                    linearLayoutGlyphsMain.addView(imageView);
+                    imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.b_fish));
+                    linearLayout.addView(imageView);
 
                     break;
                 case 'C':
                     //nameGlyphs += "tent";
-                    imageView = new ImageView(getActivity());
+                    imageView = new ImageView(context);
                     imageView.setLayoutParams(new LinearLayout.LayoutParams(45, 45));
-                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.c_tent));
-                    linearLayoutGlyphsMain.addView(imageView);
+                    imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.c_tent));
+                    linearLayout.addView(imageView);
 
                     break;
                 case 'D':
                     //nameGlyphs += "rocket";
-                    imageView = new ImageView(getActivity());
+                    imageView = new ImageView(context);
                     imageView.setLayoutParams(new LinearLayout.LayoutParams(45, 45));
-                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.d_rocket));
-                    linearLayoutGlyphsMain.addView(imageView);
+                    imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.d_rocket));
+                    linearLayout.addView(imageView);
 
                     break;
                 case 'E':
                     //nameGlyphs += "tree";
-                    imageView = new ImageView(getActivity());
+                    imageView = new ImageView(context);
                     imageView.setLayoutParams(new LinearLayout.LayoutParams(45, 45));
-                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.e_tree));
-                    linearLayoutGlyphsMain.addView(imageView);
+                    imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.e_tree));
+                    linearLayout.addView(imageView);
 
                     break;
                 case 'F':
                     //nameGlyphs += "atlas";
-                    imageView = new ImageView(getActivity());
+                    imageView = new ImageView(context);
                     imageView.setLayoutParams(new LinearLayout.LayoutParams(45, 45));
-                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.f_atlas));
-                    linearLayoutGlyphsMain.addView(imageView);
+                    imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.f_atlas));
+                    linearLayout.addView(imageView);
 
                     break;
             }
@@ -386,5 +431,71 @@ public class PlaceholderFragment extends Fragment {
         }
     }
 
+    private void showDialog() {
+        DialogFragment newFragment = DialogSaveGlyphs.newInstance("Save glyphs to the Portal",textView18.getText().toString());
+        newFragment.show(getFragmentManager(), "dialog");
+    }
+
+    public static class DialogSaveGlyphs extends DialogFragment{
+
+        static DialogSaveGlyphs newInstance(String title,String code) {
+            DialogSaveGlyphs f = new DialogSaveGlyphs();
+            Bundle args = new Bundle();
+            args.putString("title", title);
+            args.putString("code", code);
+            f.setArguments(args);
+            return f;
+        }
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            View v = inflater.inflate(R.layout.dialog_save_glyphs, container,false);
+             return v;
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            String title = getArguments().getString("title");
+            String code = getArguments().getString("code");
+            TextView textView = new TextView(getActivity());
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+            View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_save_glyphs, null);
+            LinearLayout linearLayout = view.findViewById(R.id.linearLayoutDialogGlyphs);
+            TextInputEditText textInputEditText = view.findViewById(R.id.textInputDialog);
+            getGlyphs(code,linearLayout,getActivity());
+
+            textView.setText(title);
+            builder.setView(view);
+
+             builder.setIcon(R.drawable.a_voxel)
+                    .setCustomTitle(textView)
+                    .setPositiveButton("Save",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    insertCodeGlyphs(code,textInputEditText.getText().toString(), getContext());
+                                }
+                            }
+                    )
+                    .setNegativeButton("Cancel",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+
+                                }
+                            }
+                    )
+                    .create();
+
+             return builder.create();
+        }
+
+    }
 
 }
