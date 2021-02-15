@@ -21,6 +21,10 @@
 
     <style name="Theme.NMS.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
+    <style name="ThemeOverlay.AppCompat.ActionBar" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+    <item name="tint">@color/white</item>
+    </style>
+
     <style name="Theme.NMS.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="Theme.NMS.NoActionBar.NoActionBar">

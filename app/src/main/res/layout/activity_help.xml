@@ -62,7 +62,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Galactic Coordinates are the points that can be extracted from a Signal Booster data string and used in a Coordinate Plotting App to acquire your Galactic Coordinate Position in a No Man's Sky galaxy.  When placed, a Signal Booster will display a Coordinate data string such as HUKYA:046A:0081:0D6D:0038"
+            android:text="Galactic Coordinates are the points that can be extracted from a Signal Booster data string and used in this App to acquire 12 glyphs that can be used on the Portal.  When placed, a Signal Booster will display a Coordinate data string such as HUKYA:046A:0081:0D6D:0038"
             android:textColor="@color/white"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -78,6 +78,39 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView26"
             app:srcCompat="@drawable/boost_coordinates" />
+
+        <TextView
+            android:id="@+id/textView27"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Portal"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView3" />
+
+        <ImageView
+            android:id="@+id/imageView4"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/porta_gate"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView27" />
+
+        <TextView
+            android:id="@+id/textView28"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="A Portal is a point of interest in No Man's Sky and exactly one can be found on all celestial bodies of a star system, like planets or their moons. Portals can be activated and used to quickly travel between planets of a star system, star systems of a region or entire regions within the same galaxy. Unlike other structures, they can even be found on dead planets and in uncharted systems.  The ability to activate a portal is taught to the player in the Artemis Path storyline in the A Leap in the Dark quest and doesn't need the entirety of all sixteen glyphs to be used. All glyphs can be found within Traveller Graves beforehand and subsequently used to travel anywhere inside the galaxy."
+            android:textColor="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView4" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>
