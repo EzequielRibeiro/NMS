@@ -1,5 +1,6 @@
 package com.portaladdress.nms.ui.main;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -7,6 +8,7 @@ import android.content.DialogInterface;
 import android.text.TextWatcher;
 import android.os.Bundle;
 import android.text.Editable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -77,6 +79,7 @@ public class PlaceholderFragment extends Fragment {
 
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container,
@@ -190,6 +193,9 @@ public class PlaceholderFragment extends Fragment {
                     textView18.setText(t);
                     textView18.setSelection(textView18.length());
                 }
+                if(t.length() < 12){
+                    textView20.setText("");
+                }
             }
         });
 
@@ -204,12 +210,6 @@ public class PlaceholderFragment extends Fragment {
             }
         });
 
-        pageViewModel.getText().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                // textView.setText(s);
-            }
-        });
         return root;
     }
 
@@ -244,9 +244,14 @@ public class PlaceholderFragment extends Fragment {
            i++;
        }
        isUpdating = true;
+
        EditText editText = (EditText) v;
        editText.setText(mascara.toUpperCase());
-       editText.setSelection(mascara.length());
+       try {
+           editText.setSelection(mascara.length());
+       }catch (IndexOutOfBoundsException exception){
+           exception.printStackTrace();
+       }
    }
 
 
@@ -268,6 +273,7 @@ public class PlaceholderFragment extends Fragment {
 
             if (!textView18.getText().toString().equals(result))
                   textView18.setText(result);
+            Log.e("coordinates",coordinates+":::"+result);
 
         }
 
@@ -279,6 +285,7 @@ public class PlaceholderFragment extends Fragment {
 
         if(dbAdapter.insertGlyphs(code,comments) > 0){
             dbAdapter.close();
+            SaveFragment.glyphsAdaptador.notifyDataSetChanged();
             Toast.makeText(context, "Save", Toast.LENGTH_SHORT).show();
 
         }

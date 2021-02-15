@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,12 +29,11 @@ import java.util.List;
 
 public class SaveFragment extends Fragment {
 
-    private static Context context;
     private static SaveViewModel mViewModel;
-    public static ListView listView;
+    static public ListView listView;
     private static final String ARG_SECTION_NUMBER = "section_number";
-    static public GlyphsAdaptador glyphsAdaptador;
-    static public List<Glyphs> glyphsArrayList;
+    public static GlyphsAdaptador glyphsAdaptador;
+    private List<Glyphs> glyphsArrayList;
 
     public static SaveFragment newInstance(int index, Context context) {
 
@@ -54,6 +54,7 @@ public class SaveFragment extends Fragment {
         glyphsArrayList = dbAdapter.getAllValuesGlyphs();
         glyphsAdaptador = new GlyphsAdaptador(getActivity(),glyphsArrayList);
         listView.setAdapter(glyphsAdaptador);
+        dbAdapter.close();
 
         return v ;
     }
@@ -66,5 +67,6 @@ public class SaveFragment extends Fragment {
             Toast.makeText(getActivity(), "Nada para mostrar", Toast.LENGTH_SHORT).show();
 
     }
+
 
 }

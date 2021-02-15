@@ -74,9 +74,6 @@ public class DBAdapter {
                 glyphsArrayList.add(glyphs);
             } while (cursor.moveToNext());
         }
-
-        close();
-
         return glyphsArrayList;
 
     }
@@ -88,6 +85,20 @@ public class DBAdapter {
         contentValues.put(KEY_COMMENTS, commenst);
 
         return db.update(DATABASE_TABLE_GLYPHS, contentValues, "id=" + id, null) > 0;
+
+    }
+
+    public int getCount(){
+        Cursor cursor;
+        int count = 0;
+
+        cursor = db.rawQuery("select count("+KEY_CODE+") from "+ DATABASE_TABLE_GLYPHS,null);
+        if(cursor.moveToFirst())
+            count = cursor.getInt(0);
+        cursor.close();
+
+        return count;
+
 
     }
 

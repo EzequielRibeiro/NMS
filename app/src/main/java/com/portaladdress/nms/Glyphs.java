@@ -1,5 +1,7 @@
 package com.portaladdress.nms;
 
+import android.util.Log;
+
 import static java.lang.Integer.parseInt;
 
 public class Glyphs {
@@ -140,6 +142,7 @@ public class Glyphs {
         String a = p.toUpperCase();
         String b = s.toUpperCase();
         String c = shiftModUpFill(y, smallShift, smallMod);
+        if(Integer.valueOf(c) < 10)c = "0"+ c;
         String d = shiftModUpFill(z, bigShift, bigMod);
         String e = shiftModUpFill(x, bigShift, bigMod);
         coordinates = a + b + c + d + e;
