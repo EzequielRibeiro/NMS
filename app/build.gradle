@@ -5,6 +5,14 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        signing {
+            storeFile file('C:\\Users\\Ezequiel\\OneDrive\\Projeto NMS\\keystore.jks')
+            storePassword 'eze3443'
+            keyAlias 'key'
+            keyPassword 'eze3443'
+        }
+    }
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
 
@@ -17,11 +25,13 @@ android {
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        proguardFiles getDefaultProguardFile('proguard-android.txt')
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }

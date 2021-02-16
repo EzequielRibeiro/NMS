@@ -30,13 +30,13 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         switch (position){
             case 0:
-                return PlaceholderFragment.newInstance(position + 1);
+                return EncoderFragment.newInstance(position + 1);
             case 1:
                 return GlyphsFragment.newInstance(position + 1);
             case 2:
                 return SaveFragment.newInstance(position + 1,mContext);
         }
-        return PlaceholderFragment.newInstance(position + 1);
+        return EncoderFragment.newInstance(position + 1);
 
     }
 

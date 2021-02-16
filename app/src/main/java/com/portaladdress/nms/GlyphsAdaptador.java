@@ -1,10 +1,8 @@
 package com.portaladdress.nms;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,13 +12,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.portaladdress.nms.ui.main.SaveFragment;
+import com.portaladdress.nms.ui.main.EncoderFragment;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
-import static com.portaladdress.nms.ui.main.PlaceholderFragment.getGlyphs;
+import static com.portaladdress.nms.ui.main.EncoderFragment.getGlyphs;
 
 
 /**
@@ -49,6 +46,9 @@ public class GlyphsAdaptador extends ArrayAdapter<Glyphs> implements View.OnClic
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_glyphs, parent, false);
         }
+
+        TextView textViewCodeList = convertView.findViewById(R.id.textViewCodeList);
+        textViewCodeList.setText(glyphs.getGlyphsCode());
 
         TextView textViewComments = convertView.findViewById(R.id.textViewComments);
         textViewComments.setText(glyphs.getComments());
@@ -101,7 +101,7 @@ public class GlyphsAdaptador extends ArrayAdapter<Glyphs> implements View.OnClic
                 if (dbAdapter.deleteGlyphs(glyphs1.getId())) {
                     glyphsArrayList.remove(position);
                     //SaveFragment.glyphsAdaptador.remove(getItem(position));
-                    SaveFragment.glyphsAdaptador.notifyDataSetChanged();
+                    EncoderFragment.glyphsAdaptador.notifyDataSetChanged();
                     dbAdapter.close();
                 }
                 Toast.makeText(context, "Deleted", Toast.LENGTH_SHORT).show();

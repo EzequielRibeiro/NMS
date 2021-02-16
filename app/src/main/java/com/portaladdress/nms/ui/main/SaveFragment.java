@@ -1,18 +1,14 @@
 package com.portaladdress.nms.ui.main;
 
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.app.Activity;
 import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,20 +16,18 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.portaladdress.nms.DBAdapter;
-import com.portaladdress.nms.Glyphs;
 import com.portaladdress.nms.GlyphsAdaptador;
 import com.portaladdress.nms.R;
 
-import java.util.ArrayList;
-import java.util.List;
+import static com.portaladdress.nms.ui.main.EncoderFragment.glyphsAdaptador;
+import static com.portaladdress.nms.ui.main.EncoderFragment.glyphsArrayList;
 
 public class SaveFragment extends Fragment {
 
     private static SaveViewModel mViewModel;
     static public ListView listView;
     private static final String ARG_SECTION_NUMBER = "section_number";
-    public static GlyphsAdaptador glyphsAdaptador;
-    private List<Glyphs> glyphsArrayList;
+
 
     public static SaveFragment newInstance(int index, Context context) {
 
@@ -64,7 +58,7 @@ public class SaveFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         mViewModel = new ViewModelProvider(this).get(SaveViewModel.class);
         if(listView.getCount() == 0)
-            Toast.makeText(getActivity(), "Nada para mostrar", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "No saved coordinates", Toast.LENGTH_SHORT).show();
 
     }
 

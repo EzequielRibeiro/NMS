@@ -56,4 +56,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayoutListGlyphs" />
 
+    <TextView
+        android:id="@+id/textViewCodeList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="4dp"
+        android:textColor="@color/teal_700"
+        android:textIsSelectable="true"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayoutListGlyphs"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

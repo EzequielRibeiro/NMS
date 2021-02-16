@@ -142,7 +142,7 @@ public class Glyphs {
         String a = p.toUpperCase();
         String b = s.toUpperCase();
         String c = shiftModUpFill(y, smallShift, smallMod);
-        if(Integer.valueOf(c) < 10)c = "0"+ c;
+        if(c.length() < 2) c = "0"+ c;
         String d = shiftModUpFill(z, bigShift, bigMod);
         String e = shiftModUpFill(x, bigShift, bigMod);
         coordinates = a + b + c + d + e;

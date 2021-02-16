@@ -1,7 +1,6 @@
 package com.portaladdress.nms.ui.main;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -21,30 +20,27 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.RequestConfiguration;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.portaladdress.nms.DBAdapter;
 import com.portaladdress.nms.Glyphs;
+import com.portaladdress.nms.GlyphsAdaptador;
 import com.portaladdress.nms.R;
 import com.portaladdress.nms.SaveImageGlyphs;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.List;
 
-public class PlaceholderFragment extends Fragment {
+public class EncoderFragment extends Fragment {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static final String MASK = "####:####:####:####";
@@ -52,15 +48,17 @@ public class PlaceholderFragment extends Fragment {
     private Button resetButton,buttonShareGlyphs,buttonSaveMain;
     private View root;
     private static boolean isUpdating, editTextBox1,editTextBox2,toUpperCase = true;
-    private static String old = "";
+
     private LinearLayout linearLayoutGlyphsMain;
     private AdView mAdView;
+    public static GlyphsAdaptador glyphsAdaptador;
+    public static List<Glyphs> glyphsArrayList;
 
 
     private PageViewModel pageViewModel;
 
-    public static PlaceholderFragment newInstance(int index) {
-        PlaceholderFragment fragment = new PlaceholderFragment();
+    public static EncoderFragment newInstance(int index) {
+        EncoderFragment fragment = new EncoderFragment();
         Bundle bundle = new Bundle();
         bundle.putInt(ARG_SECTION_NUMBER, index);
         fragment.setArguments(bundle);
@@ -84,8 +82,12 @@ public class PlaceholderFragment extends Fragment {
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        root = inflater.inflate(R.layout.fragment_main, container, false);
-        // final TextView textView = root.findViewById(R.id.section_label);
+        root = inflater.inflate(R.layout.encoder_fragment, container, false);
+
+        DBAdapter dbAdapter = new DBAdapter(getActivity());
+        glyphsArrayList = dbAdapter.getAllValuesGlyphs();
+        glyphsAdaptador = new GlyphsAdaptador(getActivity(),glyphsArrayList);
+
         linearLayoutGlyphsMain = root.findViewById(R.id.linearLayoutGlyphsMain);
         resetButton = root.findViewById(R.id.buttonResetGlyphs);
         textView18 = root.findViewById(R.id.textViewGlyphsCode);
@@ -94,8 +96,8 @@ public class PlaceholderFragment extends Fragment {
         buttonSaveMain    = root.findViewById(R.id.buttonSaveMain);
         mAdView = root.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
-        RequestConfiguration requestConfiguration = new RequestConfiguration.Builder().setTestDeviceIds(Arrays.asList("DB530A1BBBDBFE8567328113528A19EF")).build();
-        MobileAds.setRequestConfiguration(requestConfiguration);
+        //RequestConfiguration requestConfiguration = new RequestConfiguration.Builder().setTestDeviceIds(Arrays.asList("DB530A1BBBDBFE8567328113528A19EF")).build();
+        //MobileAds.setRequestConfiguration(requestConfiguration);
         mAdView.loadAd(adRequest);
 
         buttonShareGlyphs.setOnClickListener(new View.OnClickListener() {
@@ -178,8 +180,8 @@ public class PlaceholderFragment extends Fragment {
                 if (s.length() == 12 && editTextBox2) {
                     Glyphs glyphs = new Glyphs();
                     String result = glyphs.getHexCoords(String.valueOf(s));
-                    if (!textView20.getText().toString().equals(result))
-                          textView20.setText(result);
+                    textView20.setText("");
+                    textView20.setText(result);
                     getGlyphs(s,linearLayoutGlyphsMain,getActivity());
                     hideKeyboard(getActivity());
                 }
@@ -193,9 +195,7 @@ public class PlaceholderFragment extends Fragment {
                     textView18.setText(t);
                     textView18.setSelection(textView18.length());
                 }
-                if(t.length() < 12){
-                    textView20.setText("");
-                }
+
             }
         });
 
@@ -224,7 +224,9 @@ public class PlaceholderFragment extends Fragment {
 
    public static void applyMask(View v, CharSequence s){
        final String str = unmask(s.toString());
+       String old = "";
        String mascara = "";
+
        if (isUpdating) {
            old = str;
            isUpdating = false;
@@ -285,7 +287,7 @@ public class PlaceholderFragment extends Fragment {
 
         if(dbAdapter.insertGlyphs(code,comments) > 0){
             dbAdapter.close();
-            SaveFragment.glyphsAdaptador.notifyDataSetChanged();
+            glyphsAdaptador.notifyDataSetChanged();
             Toast.makeText(context, "Save", Toast.LENGTH_SHORT).show();
 
         }
@@ -441,6 +443,12 @@ public class PlaceholderFragment extends Fragment {
     private void showDialog() {
         DialogFragment newFragment = DialogSaveGlyphs.newInstance("Save glyphs to the Portal",textView18.getText().toString());
         newFragment.show(getFragmentManager(), "dialog");
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
     }
 
     public static class DialogSaveGlyphs extends DialogFragment{

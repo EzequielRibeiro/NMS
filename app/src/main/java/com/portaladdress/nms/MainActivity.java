@@ -1,6 +1,9 @@
 package com.portaladdress.nms;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import com.google.android.gms.ads.AdRequest;
@@ -9,6 +12,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,7 +22,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -80,13 +83,36 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    private void about(){
+        String version = "v";
+        try {
+            PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+             version += pInfo.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(getString(R.string.app_name) +" "+version+"\n"+"Developer: Ezequiel A. Ribeiro")
+                .setTitle("About");
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         Intent intent;
         switch(item.getItemId()){
             case R.id.menuAbout:
-                Toast.makeText(this, "You clicked about", Toast.LENGTH_SHORT).show();
+                about();
                 break;
 
             case R.id.menuPrivacy:

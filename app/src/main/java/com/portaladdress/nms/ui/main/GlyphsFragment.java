@@ -1,11 +1,8 @@
 package com.portaladdress.nms.ui.main;
 
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -17,7 +14,6 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -161,7 +157,7 @@ public class GlyphsFragment extends Fragment implements View.OnClickListener {
     }
 
     private void showDialog() {
-        DialogFragment newFragment = PlaceholderFragment.DialogSaveGlyphs.newInstance("Save glyphs to the Portal",textViewGlyphsCode.getText().toString());
+        DialogFragment newFragment = EncoderFragment.DialogSaveGlyphs.newInstance("Save glyphs to the Portal",textViewGlyphsCode.getText().toString());
         newFragment.show(getFragmentManager(), "dialog");
     }
 

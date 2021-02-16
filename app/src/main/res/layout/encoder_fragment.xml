@@ -8,7 +8,7 @@
     android:layout_gravity="center"
     android:background="@drawable/background"
     android:fitsSystemWindows="true"
-    tools:context=".ui.main.PlaceholderFragment">
+    tools:context=".ui.main.EncoderFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -29,7 +29,7 @@
             ads:layout_constraintBottom_toBottomOf="parent"
             ads:layout_constraintEnd_toEndOf="parent"
             ads:layout_constraintStart_toStartOf="parent"
-            ads:layout_constraintTop_toBottomOf="@+id/buttonShareGlyphs"></com.google.android.gms.ads.AdView>
+            ads:layout_constraintTop_toBottomOf="@id/buttonSaveMain"></com.google.android.gms.ads.AdView>
 
         <ImageView
             android:id="@+id/imageView"
@@ -84,7 +84,7 @@
             android:singleLine="true"
             android:textColor="@color/teal_700"
             android:textColorHint="@color/cardview_dark_background"
-            android:textSize="14sp"
+            android:textSize="18sp"
             app:layout_constraintBottom_toTopOf="@+id/textView19"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -106,7 +106,7 @@
             android:singleLine="true"
             android:textColor="@color/teal_700"
             android:textColorHint="@color/cardview_dark_background"
-            android:textSize="14sp"
+            android:textSize="18sp"
             ads:layout_constraintBottom_toTopOf="@id/linearLayoutGlyphsMain"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
