@@ -620,7 +620,7 @@
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_marginTop="8dp"
-            android:background="@null"
+            android:background="@drawable/background"
             android:gravity="center"
             android:orientation="horizontal"
             app:layout_constraintBottom_toTopOf="@+id/textView17"

@@ -36,6 +36,7 @@
         android:id="@+id/linearLayoutListGlyphs"
         android:layout_width="0dp"
         android:layout_height="50dp"
+        android:background="@color/cardview_dark_background"
         android:gravity="center"
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/textViewComments"
