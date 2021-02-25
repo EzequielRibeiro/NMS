@@ -60,6 +60,7 @@ public class SaveImageGlyphs {
         shareIntent.setAction(Intent.ACTION_SEND);
         shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
         shareIntent.setType("image/*");
+        content.destroyDrawingCache();
         activity.startActivity(Intent.createChooser(shareIntent, "Send to:"));
 
     } 
