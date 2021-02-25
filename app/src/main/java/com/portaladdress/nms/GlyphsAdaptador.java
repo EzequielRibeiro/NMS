@@ -3,12 +3,14 @@ package com.portaladdress.nms;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,9 +29,8 @@ public class GlyphsAdaptador extends ArrayAdapter<Glyphs> implements View.OnClic
 
     private Context context;
     private Glyphs glyphs;
-    private LinearLayout linearLayoutGlyphs;
     private List<Glyphs> glyphsArrayList;
-
+    private ListContent listContent;
 
     public GlyphsAdaptador(Context context, List<Glyphs> glyphsArrayList) {
         super(context, 0, glyphsArrayList);
@@ -47,21 +48,25 @@ public class GlyphsAdaptador extends ArrayAdapter<Glyphs> implements View.OnClic
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_glyphs, parent, false);
         }
 
-        TextView textViewCodeList = convertView.findViewById(R.id.textViewCodeList);
-        textViewCodeList.setText(glyphs.getGlyphsCode());
+        listContent = new ListContent();
 
-        TextView textViewComments = convertView.findViewById(R.id.textViewComments);
-        textViewComments.setText(glyphs.getComments());
 
-        linearLayoutGlyphs = convertView.findViewById(R.id.linearLayoutListGlyphs);
+        listContent.textViewCodeList = convertView.findViewById(R.id.textViewCodeList);
+        listContent.textViewCodeList.setText(glyphs.getGlyphsCode());
 
-        getGlyphs(glyphs.getGlyphsCode(), linearLayoutGlyphs, context);
+        listContent.textViewComments = convertView.findViewById(R.id.textViewComments);
+        listContent.textViewComments.setText(glyphs.getComments());
 
-        Button buttonDelete = convertView.findViewById(R.id.buttonDelete);
-        buttonDelete.setTag(position);
-        buttonDelete.setOnClickListener(this);
-        Button buttonView = convertView.findViewById(R.id.buttonView);
-        buttonView.setOnClickListener(this);
+        listContent.linearLayoutListGlyphs = convertView.findViewById(R.id.linearLayoutListGlyphs);
+
+        getGlyphs(glyphs.getGlyphsCode(), listContent.linearLayoutListGlyphs, context);
+
+        listContent.buttonDelete = convertView.findViewById(R.id.buttonDelete);
+        listContent.buttonDelete.setTag(position);
+        listContent.buttonDelete.setOnClickListener(this);
+        listContent.buttonView = convertView.findViewById(R.id.buttonView);
+        listContent.buttonView.setTag(glyphs.getGlyphsCode());
+        listContent.buttonView.setOnClickListener(this);
 
         return convertView;
     }
@@ -100,7 +105,6 @@ public class GlyphsAdaptador extends ArrayAdapter<Glyphs> implements View.OnClic
 
                 if (dbAdapter.deleteGlyphs(glyphs1.getId())) {
                     glyphsArrayList.remove(position);
-                    //SaveFragment.glyphsAdaptador.remove(getItem(position));
                     EncoderFragment.glyphsAdaptador.notifyDataSetChanged();
                     dbAdapter.close();
                 }
@@ -130,8 +134,12 @@ public class GlyphsAdaptador extends ArrayAdapter<Glyphs> implements View.OnClic
                 buildShowDialodDelete(button.getTag());
                 break;
             case R.id.buttonView:
+
+                View parentRow = (View) v.getParent();
+                LinearLayout linearLayout = parentRow.findViewById(R.id.linearLayoutListGlyphs);
+
                 try {
-                    new SaveImageGlyphs().getPrint(linearLayoutGlyphs, context);
+                    new SaveImageGlyphs().getPrint(linearLayout, context);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -139,6 +147,13 @@ public class GlyphsAdaptador extends ArrayAdapter<Glyphs> implements View.OnClic
 
         }
 
+
+    }
+
+    private class ListContent {
+        LinearLayout  linearLayoutListGlyphs;
+        Button buttonView, buttonDelete;
+        TextView textViewCodeList,textViewComments;
 
     }
 

@@ -1,5 +1,6 @@
 package com.portaladdress.nms;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -24,7 +25,12 @@ import android.view.View;
 import android.view.WindowManager;
 
 
+import com.google.android.play.core.review.ReviewInfo;
+import com.google.android.play.core.review.ReviewManager;
+import com.google.android.play.core.review.ReviewManagerFactory;
+import com.google.android.play.core.tasks.OnFailureListener;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.portaladdress.nms.ui.main.SectionsPagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
@@ -62,6 +68,86 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        int rated = getSharedPreferences("rated", MODE_PRIVATE).getInt("time", 0);
+        getSharedPreferences("rated", MODE_PRIVATE).edit().putInt("time", rated + 1).commit();
+
+        if (rated == 5) {
+            showRequestRateApp(MainActivity.this);
+        } else if (rated == 30) {
+            getSharedPreferences("rated", MODE_PRIVATE).edit().putInt("time", 0).commit();
+        }
+
+
+    }
+
+    private void showRequestRateApp(final Activity activity) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setTitle("Feedback");
+        builder.setMessage("Could you please qualify our app?");
+        builder.setCancelable(false);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                try {
+                    rateApp(activity);
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                    FirebaseCrashlytics.getInstance().recordException(exception);
+                }
+            }
+        });
+        builder.setNegativeButton("Later", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                activity.getSharedPreferences("rated", MODE_PRIVATE).edit().putInt("time", 0).commit();
+
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void rateApp(final Activity activity) throws Exception {
+        final ReviewManager reviewManager = ReviewManagerFactory.create(activity);
+        //reviewManager = new FakeReviewManager(this);
+        com.google.android.play.core.tasks.Task<ReviewInfo> request = reviewManager.requestReviewFlow();
+
+        request.addOnCompleteListener(new com.google.android.play.core.tasks.OnCompleteListener<ReviewInfo>() {
+            @Override
+            public void onComplete(com.google.android.play.core.tasks.Task<ReviewInfo> task) {
+                if (task.isSuccessful()) {
+                    ReviewInfo reviewInfo = task.getResult();
+                    com.google.android.play.core.tasks.Task<Void> flow = reviewManager.launchReviewFlow(activity, reviewInfo);
+                    flow.addOnCompleteListener(new com.google.android.play.core.tasks.OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(com.google.android.play.core.tasks.Task<Void> task) {
+                            Log.e("Rate Flow", "Complete");
+                        }
+                    });
+
+                    flow.addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(Exception e) {
+                            activity.getSharedPreferences("rated", MODE_PRIVATE).edit().putInt("time", 0).commit();
+                            Log.e("Rate Flow", "Fail");
+                            e.printStackTrace();
+                        }
+                    });
+
+                } else {
+                    activity.getSharedPreferences("rated", MODE_PRIVATE).edit().putInt("time", 0).commit();
+                    Log.e("Rate Task", "Fail");
+                }
+            }
+
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(Exception e) {
+                activity.getSharedPreferences("rated", MODE_PRIVATE).edit().putInt("time", 0).commit();
+                e.printStackTrace();
+                Log.e("Rate Request", "Fail");
+            }
+        });
+
     }
 
     public void onResume() {
