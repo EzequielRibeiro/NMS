@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:ads="http://schemas.android.com/apk/res-auto"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,189 +7,165 @@
     android:layout_gravity="center"
     android:background="@drawable/background"
     android:fitsSystemWindows="true"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
     tools:context=".ui.main.EncoderFragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:src="@drawable/character_race_icons"
+        app:layout_constraintBottom_toTopOf="@+id/textView21"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.gms.ads.AdView
-            android:id="@+id/adView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            ads:adSize="BANNER"
-            ads:adUnitId="@string/banner_ad_unit_id"
-            ads:layout_constraintBottom_toBottomOf="parent"
-            ads:layout_constraintEnd_toEndOf="parent"
-            ads:layout_constraintStart_toStartOf="parent"
-            ads:layout_constraintTop_toBottomOf="@id/buttonSaveMain"></com.google.android.gms.ads.AdView>
+    <TextView
+        android:id="@+id/textView21"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="PORTAL CODE TO GLYPHS"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/textView22"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/character_race_icons"
-            ads:layout_constraintBottom_toTopOf="@+id/textView21"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/textView23"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Paste your galactic address here to convert into glyphs"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@+id/textViewGlyphsAddress"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView19" />
 
-        <TextView
-            android:id="@+id/textView21"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="PORTAL CODE TO GLYPHS"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/textView22"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView" />
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/textViewGlyphsCode"
+        android:layout_width="210dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/white"
+        android:digits="0123456789ABCDEFabcdef"
+        android:gravity="center"
+        android:hint="_ _ _ _ _ _ _ _ _ _ _ _"
+        android:inputType="textCapCharacters"
+        android:maxLength="12"
+        android:padding="5dp"
+        android:singleLine="true"
+        android:textColor="@color/teal_700"
+        android:textColorHint="@color/cardview_dark_background"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/textView19"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView22" />
 
-        <TextView
-            android:id="@+id/textView23"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Paste your galactic address here to convert into glyphs"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toTopOf="@+id/textViewGlyphsAddress"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView19" />
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/textViewGlyphsAddress"
+        android:layout_width="210dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/white"
+        android:digits="0123456789ABCDEFabcdef"
+        android:gravity="center"
+        android:hint="0000:0000:0000:0000"
+        android:inputType="textCapCharacters"
+        android:maxLength="19"
+        android:padding="5dp"
+        android:singleLine="true"
+        android:textColor="@color/teal_700"
+        android:textColorHint="@color/cardview_dark_background"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@id/linearLayoutGlyphsMain"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView23" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/textViewGlyphsCode"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:background="@color/white"
-            android:digits="0123456789ABCDEFabcdef"
-            android:gravity="center"
-            android:hint="_ _ _ _ _ _ _ _ _ _ _ _"
-            android:inputType="textCapCharacters"
-            android:maxLength="12"
-            android:padding="5dp"
-            android:singleLine="true"
-            android:textColor="@color/teal_700"
-            android:textColorHint="@color/cardview_dark_background"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toTopOf="@+id/textView19"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView22" />
+    <TextView
+        android:id="@+id/textView19"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="GALACTIC ADDRESS TO GLYPHS"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/textView23"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewGlyphsCode" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/textViewGlyphsAddress"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:background="@color/white"
-            android:digits="0123456789ABCDEFabcdef"
-            android:gravity="center"
-            android:hint="0000:0000:0000:0000"
-            android:inputType="textCapCharacters"
-            android:maxLength="19"
-            android:padding="5dp"
-            android:singleLine="true"
-            android:textColor="@color/teal_700"
-            android:textColorHint="@color/cardview_dark_background"
-            android:textSize="18sp"
-            ads:layout_constraintBottom_toTopOf="@id/linearLayoutGlyphsMain"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView23" />
+    <TextView
+        android:id="@+id/textView22"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Paste the code here to convert into glyphs."
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@+id/textViewGlyphsCode"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView21" />
 
-        <TextView
-            android:id="@+id/textView19"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:gravity="center"
-            android:text="GALACTIC ADDRESS TO GLYPHS"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/textView23"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewGlyphsCode" />
+    <Button
+        android:id="@+id/buttonResetGlyphs"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
 
-        <TextView
-            android:id="@+id/textView22"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Paste the code here to convert into glyphs."
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toTopOf="@+id/textViewGlyphsCode"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView21" />
+        android:text="Reset"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/buttonSaveMain"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayoutGlyphsMain" />
 
-        <Button
-            android:id="@+id/buttonResetGlyphs"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+    <Button
+        android:id="@+id/buttonShareGlyphs"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:focusable="auto"
+        android:text="Share"
+        app:layout_constraintEnd_toStartOf="@+id/buttonSaveMain"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayoutGlyphsMain" />
 
-            android:layout_marginBottom="8dp"
-            android:text="Reset"
-            ads:layout_constraintBottom_toTopOf="@+id/adView"
-            ads:layout_constraintStart_toEndOf="@+id/buttonSaveMain"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayoutGlyphsMain" />
+    <Button
+        android:id="@+id/buttonSaveMain"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="SAVE"
+        app:layout_constraintEnd_toStartOf="@+id/buttonResetGlyphs"
+        app:layout_constraintStart_toEndOf="@+id/buttonShareGlyphs"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayoutGlyphsMain" />
 
-        <Button
-            android:id="@+id/buttonShareGlyphs"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:focusable="auto"
-            android:text="Share"
-            ads:layout_constraintBottom_toTopOf="@+id/adView"
-            ads:layout_constraintEnd_toStartOf="@+id/buttonSaveMain"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayoutGlyphsMain" />
-
-        <Button
-            android:id="@+id/buttonSaveMain"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:text="SAVE"
-            ads:layout_constraintBottom_toTopOf="@+id/adView"
-            ads:layout_constraintEnd_toStartOf="@+id/buttonResetGlyphs"
-            ads:layout_constraintStart_toEndOf="@+id/buttonShareGlyphs"
-            ads:layout_constraintTop_toBottomOf="@+id/linearLayoutGlyphsMain" />
-
-        <LinearLayout
-            android:id="@+id/linearLayoutGlyphsMain"
-            android:layout_width="match_parent"
-            android:layout_height="45dp"
-            android:background="@drawable/background"
-            android:gravity="center"
-            android:orientation="horizontal"
-            ads:layout_constraintBottom_toTopOf="@+id/buttonResetGlyphs"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewGlyphsAddress"></LinearLayout>
+    <LinearLayout
+        android:id="@+id/linearLayoutGlyphsMain"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@drawable/background"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/buttonResetGlyphs"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewGlyphsAddress"></LinearLayout>
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
 
-</RelativeLayout>

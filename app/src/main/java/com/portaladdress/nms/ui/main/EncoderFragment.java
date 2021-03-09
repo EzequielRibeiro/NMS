@@ -48,9 +48,7 @@ public class EncoderFragment extends Fragment {
     private Button resetButton,buttonShareGlyphs,buttonSaveMain;
     private View root;
     private static boolean isUpdating, editTextBox1,editTextBox2,toUpperCase = true;
-
     private LinearLayout linearLayoutGlyphsMain;
-    private AdView mAdView;
     public static GlyphsAdaptador glyphsAdaptador;
     public static List<Glyphs> glyphsArrayList;
 
@@ -94,11 +92,6 @@ public class EncoderFragment extends Fragment {
         textView20 = root.findViewById(R.id.textViewGlyphsAddress);
         buttonShareGlyphs = root.findViewById(R.id.buttonShareGlyphs);
         buttonSaveMain    = root.findViewById(R.id.buttonSaveMain);
-        mAdView = root.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        //RequestConfiguration requestConfiguration = new RequestConfiguration.Builder().setTestDeviceIds(Arrays.asList("DB530A1BBBDBFE8567328113528A19EF")).build();
-        //MobileAds.setRequestConfiguration(requestConfiguration);
-        mAdView.loadAd(adRequest);
 
         buttonShareGlyphs.setOnClickListener(new View.OnClickListener() {
             @Override

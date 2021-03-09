@@ -124,6 +124,7 @@ public class Glyphs {
     public String getCoordsDetails(String coordinates) {
 
         String[] coords = coordsFormated(coordinates);
+        String x="",y="",p="",s="",z="";
 
         if (coords[0].contains("Incorrect")) {
             return coords[0];
@@ -132,12 +133,16 @@ public class Glyphs {
         int bigShift =   0x801;
         int smallShift = 0x81;
 
-        String x = coords[0];
-        String y = coords[1];
-        String z = coords[2];
-
-        String p = coords[3].substring(0, 1);
-        String s = coords[3].substring(1, 4);
+        try {
+            x = coords[0];
+            y = coords[1];
+            z = coords[2];
+            p = coords[3].substring(0, 1);
+            s = coords[3].substring(1, 4);
+        }catch (StringIndexOutOfBoundsException e){
+            Log.e("NMS",e.getMessage());
+            return "";
+        }
 
         String a = p.toUpperCase();
         String b = s.toUpperCase();
