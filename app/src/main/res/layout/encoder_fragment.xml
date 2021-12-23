@@ -157,8 +157,8 @@
     <LinearLayout
         android:id="@+id/linearLayoutGlyphsMain"
         android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:background="@drawable/background"
+        android:layout_height="wrap_content"
+        android:background="@null"
         android:gravity="center"
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/buttonResetGlyphs"

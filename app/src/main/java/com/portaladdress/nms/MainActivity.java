@@ -8,17 +8,20 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 
-import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.RequestConfiguration;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -43,6 +46,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.portaladdress.nms.ui.main.SectionsPagerAdapter;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -65,9 +69,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-        mInterstitialAd = new InterstitialAd(this);
-        mInterstitialAd.setAdUnitId(getString(R.string.inters_ad_unit_id));
-        mInterstitialAd.loadAd(new AdRequest.Builder().build());
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,14 +91,73 @@ public class MainActivity extends AppCompatActivity {
             getSharedPreferences("rated", MODE_PRIVATE).edit().putInt("time", 0).commit();
         }
 
+
+      //  RequestConfiguration requestConfiguration = new RequestConfiguration.Builder().setTestDeviceIds(Arrays.asList("DB530A1BBBDBFE8567328113528A19EF")).build();
+      //  MobileAds.setRequestConfiguration(requestConfiguration);
+
+
+    }
+    private void loadAd(){
         mAdView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
-       // RequestConfiguration requestConfiguration = new RequestConfiguration.Builder().setTestDeviceIds(Arrays.asList("DB530A1BBBDBFE8567328113528A19EF")).build();
-       // MobileAds.setRequestConfiguration(requestConfiguration);
-
         mAdView.loadAd(adRequest);
+    }
+
+    public void loadAdInter() {
+        AdRequest adRequest = new AdRequest.Builder().build();
+        String id = getString(R.string.inters_ad_unit_id);
+
+        InterstitialAd.load(MainActivity.this, id, adRequest,
+                new InterstitialAdLoadCallback() {
+                    @Override
+                    public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                        mInterstitialAd = interstitialAd;
+                        interstitialAdListner();
+                        Log.i("InterstitialAd","loaded");
+                    }
+
+                    @Override
+                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                        mInterstitialAd = null;
+                        Log.i("InterstitialAd","Failed: "+ loadAdError.toString());
+                    }
+                });
+
+    }
+    private void interstitialAdListner(){
+        mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback(){
+            @Override
+            public void onAdDismissedFullScreenContent() {
+                // Called when fullscreen content is dismissed.
+                mInterstitialAd = null;
+                Log.d("TAG", "The ad was dismissed.");
+            }
+
+            @Override
+            public void onAdFailedToShowFullScreenContent(AdError adError) {
+                // Called when fullscreen content failed to show.
+                mInterstitialAd = null;
+                Log.d("TAG", "The ad failed to show.");
+            }
+
+            @Override
+            public void onAdShowedFullScreenContent() {
+                // Called when fullscreen content is shown.
+                // Make sure to set your reference to null so you don't
+                // show it a second time.
+                mInterstitialAd = null;
+                Log.d("TAG", "The ad was shown.");
+            }
+        });
 
 
+    }
+
+    public void showInterstitial(){
+
+        if (mInterstitialAd != null) {
+            mInterstitialAd.show(MainActivity.this);
+        }
 
     }
 
@@ -172,14 +232,17 @@ public class MainActivity extends AppCompatActivity {
 
     public void onResume() {
         super.onResume();
-        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+        loadAdInter();
+        loadAd();
 
     }
 
     public void onBackPressed(){
-        super.onBackPressed();
-        if(mInterstitialAd.isLoaded())
-            mInterstitialAd.show();
+
+        if(mInterstitialAd != null)
+           showInterstitial();
+        else
+            super.onBackPressed();
     }
 
     @Override
@@ -219,6 +282,14 @@ public class MainActivity extends AppCompatActivity {
         switch(item.getItemId()){
             case R.id.menuAbout:
                 about();
+                break;
+
+            case R.id.menuRate:
+                try {
+                    rateApp(MainActivity.this);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 break;
 
             case R.id.menuPrivacy:
