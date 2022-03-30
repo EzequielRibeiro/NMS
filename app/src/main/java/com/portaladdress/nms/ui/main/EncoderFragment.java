@@ -26,9 +26,6 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
-
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.portaladdress.nms.DBAdapter;
@@ -172,10 +169,18 @@ public class EncoderFragment extends Fragment {
 
                 if (s.length() == 12 && editTextBox2) {
                     Glyphs glyphs = new Glyphs();
-                    String result = glyphs.getHexCoords(String.valueOf(s));
-                    textView20.setText("");
-                    textView20.setText(result);
-                    getGlyphs(s,linearLayoutGlyphsMain,getActivity());
+
+                    try {
+                        String result = glyphs.getHexCoords(String.valueOf(s));
+                        textView20.setText(result);
+                        getGlyphs(s,linearLayoutGlyphsMain,getActivity());
+
+                    }catch (NumberFormatException ex){
+                        ex.printStackTrace();
+                        Snackbar.make(root,"invalid hex code" , Snackbar.LENGTH_LONG)
+                                .setAction("invalid hex code", null).show();
+                    }
+
                     hideKeyboard(getActivity());
                 }
             }
