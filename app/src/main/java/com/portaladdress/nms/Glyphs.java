@@ -12,7 +12,7 @@ public class Glyphs {
     private String comments;
     private int id;
 
-    private String shiftModUpFill(String val, int shift, int mod) {
+    private String shiftModUpFill(String val, int shift, int mod) throw NumberFormatException {
         final int i = ((parseInt(val, 16) + shift) % mod);
 
         return Integer.toHexString(i);
@@ -163,7 +163,8 @@ public class Glyphs {
         String addressHex = "0000:0000:0000:0000";
 
         if(coords.length() == 12){
-
+            
+         try{   
             addressHex = "0";
             addressHex += shiftModUpFill(new StringBuilder().append(coords.charAt(9)).append(coords.charAt(10)).append(coords.charAt(11)).toString()
                     ,hexConstBig,bigMod).concat(":00");
@@ -172,6 +173,9 @@ public class Glyphs {
             addressHex += shiftModUpFill( new StringBuilder().append(coords.charAt(6)).append(coords.charAt(7)).append(coords.charAt(8)).toString(),hexConstBig,bigMod).concat(":");
             addressHex += new StringBuilder().append("0").append(coords.charAt(1)).append(coords.charAt(2)).
                     append(coords.charAt(3)).toString();
+         }catch(NumberFormatException ex){
+             addressHex = "0000:0000:0000:0000";    
+         }
         }
 
         return addressHex.toUpperCase();
