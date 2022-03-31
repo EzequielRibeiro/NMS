@@ -137,7 +137,11 @@ public class GlyphsFragment extends Fragment implements View.OnClickListener {
                     Glyphs glyphs = new Glyphs();
                     String result = glyphs.getHexCoords(String.valueOf(s));
                     textViewGlyphsAddress.setText(result);
-
+                    
+                    
+                   if(mInterstitialAd != null)
+                        showInterstitial();
+        
                 }
             }
 
