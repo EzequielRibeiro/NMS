@@ -170,10 +170,15 @@ public class EncoderFragment extends Fragment {
                 if (s.length() == 12 && editTextBox2) {
                     Glyphs glyphs = new Glyphs();
 
-                    try {
+                try {
                         String result = glyphs.getHexCoords(String.valueOf(s));
                         textView20.setText(result);
                         getGlyphs(s,linearLayoutGlyphsMain,getActivity());
+                        
+                        
+                         if(mInterstitialAd != null)
+                              showInterstitial();
+                        
 
                     }catch (NumberFormatException ex){
                         ex.printStackTrace();
