@@ -1,6 +1,7 @@
 package com.portaladdress.nms;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -27,6 +28,10 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -35,6 +40,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 
 import com.google.android.play.core.review.ReviewInfo;
@@ -105,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static void loadAdInter(Context context) {
         AdRequest adRequest = new AdRequest.Builder().build();
-        String id = getString(R.string.inters_ad_unit_id);
+        String id = context.getString(R.string.inters_ad_unit_id);
 
         InterstitialAd.load(context, id, adRequest,
                 new InterstitialAdLoadCallback() {
@@ -155,8 +161,10 @@ public class MainActivity extends AppCompatActivity {
 
     public static void showInterstitial(Context context){
 
+        Activity activity = (Activity) context;
+
         if (mInterstitialAd != null) {
-            mInterstitialAd.show(context);
+            mInterstitialAd.show(activity);
         }
 
     }
@@ -257,8 +265,12 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        final SpannableString s = new SpannableString(getString(R.string.app_name) +" "+version+'\n'+"Developer: Ezequiel A. Ribeiro"+'\n'+
+                "Contact: http://is.gd/supportapp");
+        Linkify.addLinks(s, Linkify.ALL);
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(getString(R.string.app_name) +" "+version+"\n"+"Developer: Ezequiel A. Ribeiro")
+        builder.setMessage(s)
                 .setTitle("About");
         builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             @Override
@@ -269,6 +281,9 @@ public class MainActivity extends AppCompatActivity {
 
         AlertDialog dialog = builder.create();
         dialog.show();
+
+        ((TextView)dialog.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
+
     }
 
     @Override

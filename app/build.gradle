@@ -20,7 +20,7 @@ android {
         applicationId "com.portaladdress.nms"
         minSdkVersion 19
         targetSdkVersion 32
-        versionCode 7
+        versionCode 8
         versionName "1.0"
         multiDexEnabled true
 

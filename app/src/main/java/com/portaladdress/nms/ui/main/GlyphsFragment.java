@@ -1,5 +1,8 @@
 package com.portaladdress.nms.ui.main;
 
+import static com.portaladdress.nms.MainActivity.mInterstitialAd;
+import static com.portaladdress.nms.MainActivity.showInterstitial;
+
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -137,10 +140,6 @@ public class GlyphsFragment extends Fragment implements View.OnClickListener {
                     Glyphs glyphs = new Glyphs();
                     String result = glyphs.getHexCoords(String.valueOf(s));
                     textViewGlyphsAddress.setText(result);
-                    
-                    
-                   if(mInterstitialAd != null)
-                        showInterstitial();
         
                 }
             }
@@ -169,6 +168,11 @@ public class GlyphsFragment extends Fragment implements View.OnClickListener {
 
         if(count == 12){
             return;
+        }
+
+        if(count == 11){
+            if(mInterstitialAd != null)
+                showInterstitial(getActivity());
         }
 
         count++;

@@ -1,5 +1,8 @@
 package com.portaladdress.nms.ui.main;
 
+import static com.portaladdress.nms.MainActivity.mInterstitialAd;
+import static com.portaladdress.nms.MainActivity.showInterstitial;
+
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
@@ -177,7 +180,7 @@ public class EncoderFragment extends Fragment {
                         
                         
                          if(mInterstitialAd != null)
-                              showInterstitial();
+                              showInterstitial(getActivity());
                         
 
                     }catch (NumberFormatException ex){
