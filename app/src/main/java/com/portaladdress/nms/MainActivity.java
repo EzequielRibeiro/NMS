@@ -50,7 +50,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private InterstitialAd mInterstitialAd;
+    public static InterstitialAd mInterstitialAd;
     private FirebaseAnalytics mFirebaseAnalytics;
     private AdView mAdView;
 
@@ -238,11 +238,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onBackPressed(){
-
-        if(mInterstitialAd != null)
-           showInterstitial();
-        else
-            super.onBackPressed();
+      super.onBackPressed();
     }
 
     @Override
