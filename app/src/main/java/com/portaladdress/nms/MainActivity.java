@@ -103,11 +103,11 @@ public class MainActivity extends AppCompatActivity {
         mAdView.loadAd(adRequest);
     }
 
-    public void loadAdInter() {
+    public static void loadAdInter(Context context) {
         AdRequest adRequest = new AdRequest.Builder().build();
         String id = getString(R.string.inters_ad_unit_id);
 
-        InterstitialAd.load(MainActivity.this, id, adRequest,
+        InterstitialAd.load(context, id, adRequest,
                 new InterstitialAdLoadCallback() {
                     @Override
                     public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
                 });
 
     }
-    private void interstitialAdListner(){
+    private static void interstitialAdListner(){
         mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback(){
             @Override
             public void onAdDismissedFullScreenContent() {
@@ -232,7 +232,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void onResume() {
         super.onResume();
-        loadAdInter();
+        loadAdInter(getApplicationContext());
         loadAd();
 
     }
