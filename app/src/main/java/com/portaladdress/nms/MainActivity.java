@@ -153,10 +153,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public static void showInterstitial(){
+    public static void showInterstitial(Context context){
 
         if (mInterstitialAd != null) {
-            mInterstitialAd.show(MainActivity.this);
+            mInterstitialAd.show(context);
         }
 
     }
