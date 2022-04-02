@@ -246,7 +246,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onBackPressed(){
-      super.onBackPressed();
+     // super.onBackPressed();
+      confirmExit();
     }
 
     @Override
@@ -284,6 +285,29 @@ public class MainActivity extends AppCompatActivity {
 
         ((TextView)dialog.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
 
+    }
+
+    public void confirmExit(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle(R.string.app_name);
+        builder.setIcon(R.mipmap.ic_launcher_round);
+        builder.setMessage("Close the application ?")
+                .setCancelable(false)
+                .setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        System.exit(1);
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     @Override

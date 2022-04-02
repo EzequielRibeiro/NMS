@@ -21,7 +21,8 @@
         android:tag="0"
         app:layout_constraintEnd_toStartOf="@+id/imageButton1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck" />
 
     <ImageButton
         android:id="@+id/imageButton1"
@@ -34,7 +35,8 @@
         android:tag="1"
         app:layout_constraintEnd_toStartOf="@+id/imageButton2"
         app:layout_constraintStart_toEndOf="@+id/imageButton0"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck" />
 
     <ImageButton
         android:id="@+id/imageButton2"
@@ -47,7 +49,8 @@
         android:tag="2"
         app:layout_constraintEnd_toStartOf="@+id/imageButton3"
         app:layout_constraintStart_toEndOf="@+id/imageButton1"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="TouchTargetSizeCheck" />
 
     <ImageButton
         android:id="@+id/imageButton4"
@@ -60,7 +63,8 @@
         android:tag="4"
         app:layout_constraintEnd_toStartOf="@+id/imageButton5"
         app:layout_constraintStart_toEndOf="@+id/imageButton3"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck" />
 
     <ImageButton
         android:id="@+id/imageButton3"
@@ -73,7 +77,8 @@
         android:tag="3"
         app:layout_constraintEnd_toStartOf="@+id/imageButton4"
         app:layout_constraintStart_toEndOf="@+id/imageButton2"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck" />
 
     <ImageButton
         android:id="@+id/imageButton5"
@@ -86,7 +91,8 @@
         android:tag="5"
         app:layout_constraintEnd_toStartOf="@+id/imageButton6"
         app:layout_constraintStart_toEndOf="@+id/imageButton4"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="TouchTargetSizeCheck" />
 
     <ImageButton
         android:id="@+id/imageButton6"
@@ -99,7 +105,8 @@
         android:tag="6"
         app:layout_constraintEnd_toStartOf="@+id/imageButton7"
         app:layout_constraintStart_toEndOf="@+id/imageButton5"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="TouchTargetSizeCheck" />
 
     <ImageButton
         android:id="@+id/imageButton7"
@@ -112,7 +119,8 @@
         android:tag="7"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageButton6"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="TouchTargetSizeCheck" />
 
     <ImageButton
         android:id="@+id/imageButton8"
@@ -126,7 +134,8 @@
         android:tag="8"
         app:layout_constraintEnd_toStartOf="@+id/imageButton9"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck" />
 
     <ImageButton
         android:id="@+id/imageButton9"
@@ -140,7 +149,8 @@
         android:tag="9"
         app:layout_constraintEnd_toStartOf="@+id/imageButtonA"
         app:layout_constraintStart_toEndOf="@+id/imageButton8"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+        app:layout_constraintTop_toBottomOf="@+id/textView2"
+        tools:ignore="TouchTargetSizeCheck" />
 
     <ImageButton
         android:id="@+id/imageButtonA"
@@ -154,7 +164,8 @@
         android:tag="A"
         app:layout_constraintEnd_toStartOf="@+id/imageButtonB"
         app:layout_constraintStart_toEndOf="@+id/imageButton9"
-        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+        app:layout_constraintTop_toBottomOf="@+id/textView3"
+        tools:ignore="TouchTargetSizeCheck" />
 
     <ImageButton
         android:id="@+id/imageButtonB"
@@ -168,7 +179,8 @@
         android:tag="B"
         app:layout_constraintEnd_toStartOf="@+id/imageButtonC"
         app:layout_constraintStart_toEndOf="@+id/imageButtonA"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+        app:layout_constraintTop_toBottomOf="@+id/textView4"
+        tools:ignore="TouchTargetSizeCheck" />
 
     <ImageButton
         android:id="@+id/imageButtonC"
@@ -182,7 +194,8 @@
         android:tag="C"
         app:layout_constraintEnd_toStartOf="@+id/imageButtonD"
         app:layout_constraintStart_toEndOf="@+id/imageButtonB"
-        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+        app:layout_constraintTop_toBottomOf="@+id/textView5"
+        tools:ignore="TouchTargetSizeCheck" />
 
     <ImageButton
         android:id="@+id/imageButtonD"
@@ -196,7 +209,8 @@
         android:tag="D"
         app:layout_constraintEnd_toStartOf="@+id/imageButtonE"
         app:layout_constraintStart_toEndOf="@+id/imageButtonC"
-        app:layout_constraintTop_toBottomOf="@+id/textView6" />
+        app:layout_constraintTop_toBottomOf="@+id/textView6"
+        tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck" />
 
     <ImageButton
         android:id="@+id/imageButtonE"
@@ -210,7 +224,8 @@
         android:tag="E"
         app:layout_constraintEnd_toStartOf="@+id/imageButtonF"
         app:layout_constraintStart_toEndOf="@+id/imageButtonD"
-        app:layout_constraintTop_toBottomOf="@+id/textView7" />
+        app:layout_constraintTop_toBottomOf="@+id/textView7"
+        tools:ignore="TouchTargetSizeCheck" />
 
     <ImageButton
         android:id="@+id/imageButtonF"
@@ -224,7 +239,8 @@
         android:tag="F"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageButtonE"
-        app:layout_constraintTop_toBottomOf="@+id/textView8" />
+        app:layout_constraintTop_toBottomOf="@+id/textView8"
+        tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck" />
 
     <TextView
         android:id="@+id/textView8"
@@ -378,11 +394,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
-        android:layout_marginLeft="5dp"
         android:layout_marginEnd="5dp"
-        android:layout_marginRight="5dp"
         android:gravity="center"
-        android:text="Dragon\nfly"
+        android:text="Dragon\nFly"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
         android:textColor="@color/white"
         android:textSize="14sp"
@@ -517,10 +531,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="5dp"
-        android:layout_marginRight="5dp"
         android:gravity="center"
         android:text="PORTAL CODE"
         android:textColor="@color/white"
@@ -543,13 +555,13 @@
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView17" />
+        app:layout_constraintTop_toBottomOf="@+id/textView17"
+        tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck" />
 
     <TextView
         android:id="@+id/textView19"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:text="GALACTIC ADDRESS"
         android:textColor="@color/white"
         android:textSize="18sp"
@@ -562,7 +574,6 @@
         android:id="@+id/textViewGlyphsAddress"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:gravity="center"
         android:hint="0000:0000:0000:0000"
         android:padding="5dp"
@@ -570,10 +581,10 @@
         android:textColorHint="@color/cardview_dark_background"
         android:textIsSelectable="true"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@id/buttonSaveGlyphs"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView19" />
+        app:layout_constraintTop_toBottomOf="@+id/textView19"
+        tools:ignore="TouchTargetSizeCheck" />
 
     <LinearLayout
         android:id="@+id/linearLayoutGlyphs"
