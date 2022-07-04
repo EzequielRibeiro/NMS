@@ -52,13 +52,18 @@ public class SaveImageGlyphs {
         if(file != null)
             f = new File(file.getAbsolutePath() + file.separator + "glyphs.png");
 
-
+       /*
         FileOutputStream ostream = new FileOutputStream(f);
         bitmap.compress(Bitmap.CompressFormat.PNG, 10, ostream);
         ostream.close();
 
         Uri uri = FileProvider.getUriForFile(activity, activity.getBaseContext().
                 getApplicationContext().getPackageName() + ".com.portaladdress.provider.ImageFileProvider", f);
+        */        
+        
+        File imagePath = new File(Context.getFilesDir(), "Glyphs"); 
+        File newFile = new File(imagePath, "glyphs.jpg"); 
+        Uri uri = getUriForFile(getContext(), "com.portaladdress.provider.ImageFileProvider", newFile); 
 
         Intent shareIntent = new Intent();
         shareIntent.addFlags(FLAG_GRANT_WRITE_URI_PERMISSION);
