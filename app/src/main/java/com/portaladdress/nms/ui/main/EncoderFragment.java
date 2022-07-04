@@ -150,7 +150,7 @@ public class EncoderFragment extends Fragment {
 
                 if (s.length() == 19 && editTextBox1) {
                     setCoordinates(String.valueOf(s));
-                    hideKeyboard(getActivity());
+                    try{hideKeyboard(getActivity());}catch (NullPointerException e){e.printStackTrace();}
                 }
 
             }

@@ -16,6 +16,10 @@
         android:title="Help" />
 
     <item
+        android:id="@+id/menuRemoveAd"
+        android:title="Remove AD" />
+
+    <item
         android:id="@+id/menuAbout"
         android:title="About" />
  

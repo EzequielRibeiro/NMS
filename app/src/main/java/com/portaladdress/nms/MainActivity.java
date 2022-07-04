@@ -59,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
     public static InterstitialAd mInterstitialAd;
     private FirebaseAnalytics mFirebaseAnalytics;
     private AdView mAdView;
+    private Purchases purchases;
+    private boolean showAd = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +77,10 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        purchases = new Purchases(MainActivity.this);
 
+        showAd = getSharedPreferences("NoAd",MODE_PRIVATE).getBoolean("showAd",true);
+     /*
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -83,10 +88,10 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
                 Glyphs glyphs = new Glyphs();
                 String g = glyphs.getCoordsDetails("0125:007C:08FF:00D9");
-               Log.e("portal:", g);
+                Log.e("portal:", g);
 
             }
-        });
+        });*/
 
         int rated = getSharedPreferences("rated", MODE_PRIVATE).getInt("time", 0);
         getSharedPreferences("rated", MODE_PRIVATE).edit().putInt("time", rated + 1).commit();
@@ -98,8 +103,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-      //  RequestConfiguration requestConfiguration = new RequestConfiguration.Builder().setTestDeviceIds(Arrays.asList("DB530A1BBBDBFE8567328113528A19EF")).build();
-      //  MobileAds.setRequestConfiguration(requestConfiguration);
+
+        RequestConfiguration requestConfiguration = new RequestConfiguration.Builder().setTestDeviceIds(Arrays.asList("D2EB3B911E931B5E53C800624D4648CB")).build();
+        MobileAds.setRequestConfiguration(requestConfiguration);
 
 
     }
@@ -108,7 +114,6 @@ public class MainActivity extends AppCompatActivity {
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
     }
-
     public static void loadAdInter(Context context) {
         AdRequest adRequest = new AdRequest.Builder().build();
         String id = context.getString(R.string.inters_ad_unit_id);
@@ -162,7 +167,6 @@ public class MainActivity extends AppCompatActivity {
     public static void showInterstitial(Context context){
 
         Activity activity = (Activity) context;
-
         if (mInterstitialAd != null) {
             mInterstitialAd.show(activity);
         }
@@ -240,8 +244,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void onResume() {
         super.onResume();
-        loadAdInter(getApplicationContext());
-        loadAd();
+        purchases = new Purchases(MainActivity.this);
+        purchases.checkPurchases();
+        showAd = getSharedPreferences("NoAd",MODE_PRIVATE).getBoolean("showAd",true);
+
+        if(showAd) {
+            loadAdInter(getApplicationContext());
+            loadAd();
+        }
 
     }
 
@@ -330,6 +340,10 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menuPrivacy:
                 intent = new Intent(getBaseContext(), PrivacyPolicyHelp.class);
                 startActivity(intent);
+                break;
+
+            case R.id.menuRemoveAd:
+                purchases.billingFlow();
                 break;
 
             case R.id.menuHelp:
