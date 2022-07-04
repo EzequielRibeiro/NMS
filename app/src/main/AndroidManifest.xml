@@ -40,7 +40,7 @@
 
         <provider
             android:name="com.portaladdress.provider.ImageFileProvider"
-            android:authorities="${applicationId}.com.portaladdress.provider.ImageFileProvider"
+            android:authorities="com.portaladdress.provider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
