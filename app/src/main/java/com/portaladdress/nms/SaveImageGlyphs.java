@@ -61,7 +61,7 @@ public class SaveImageGlyphs {
                 getApplicationContext().getPackageName() + ".com.portaladdress.provider.ImageFileProvider", f);
         */        
         
-        File imagePath = new File(Context.getFilesDir(), "Glyphs"); 
+        File imagePath = new File(f.getParent(), "Glyphs"); 
         File newFile = new File(imagePath, "glyphs.png"); 
         Uri uri = getUriForFile(getContext(), "com.portaladdress.provider.ImageFileProvider", newFile); 
 
