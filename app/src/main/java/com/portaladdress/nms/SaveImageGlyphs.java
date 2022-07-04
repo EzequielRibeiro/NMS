@@ -62,7 +62,7 @@ public class SaveImageGlyphs {
         */        
         
         File imagePath = new File(Context.getFilesDir(), "Glyphs"); 
-        File newFile = new File(imagePath, "glyphs.jpg"); 
+        File newFile = new File(imagePath, "glyphs.png"); 
         Uri uri = getUriForFile(getContext(), "com.portaladdress.provider.ImageFileProvider", newFile); 
 
         Intent shareIntent = new Intent();
