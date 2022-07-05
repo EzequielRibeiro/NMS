@@ -14,14 +14,13 @@ import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.BillingClientStateListener;
 import com.android.billingclient.api.BillingFlowParams;
 import com.android.billingclient.api.BillingResult;
+import com.android.billingclient.api.ProductDetails;
+import com.android.billingclient.api.ProductDetailsResponseListener;
 import com.android.billingclient.api.Purchase;
-import com.android.billingclient.api.PurchasesResponseListener;
 import com.android.billingclient.api.PurchasesUpdatedListener;
-import com.android.billingclient.api.SkuDetails;
-import com.android.billingclient.api.SkuDetailsParams;
-import com.android.billingclient.api.SkuDetailsResponseListener;
+import com.android.billingclient.api.QueryProductDetailsParams;
+import com.google.common.collect.ImmutableList;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Purchases {
@@ -29,9 +28,10 @@ public class Purchases {
     private PurchasesUpdatedListener purchasesUpdatedListener;
     private AcknowledgePurchaseResponseListener acknowledgePurchaseResponseListener;
     private BillingClient billingClient;
-    private SkuDetails skuDetails = null;
     private boolean isConnected = false;
     private Context context;
+    private  QueryProductDetailsParams queryProductDetailsParams;
+    private BillingFlowParams billingFlowParams;
     SharedPreferences sharedPreferences;
 
     public Purchases(Context context) throws NullPointerException {
@@ -39,15 +39,15 @@ public class Purchases {
         this.context = context;
         sharedPreferences = context.getSharedPreferences("NoAd", Context.MODE_PRIVATE);
 
-        if(!sharedPreferences.contains("showAd")){
-            sharedPreferences.edit().putBoolean("showAd",true).apply();
+        if(!sharedPreferences.contains("enableAd")){
+            sharedPreferences.edit().putBoolean("enableAd",true).apply();
         }
 
         purchasesUpdatedListener = new PurchasesUpdatedListener() {
 
             @Override
             public void onPurchasesUpdated(@NonNull BillingResult billingResult, List<Purchase> purchases) {
-
+               //  Log.e("code",""+billingResult.getResponseCode());
                 if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK
                         && purchases != null) {
                     for (Purchase purchase : purchases) {
@@ -56,18 +56,12 @@ public class Purchases {
                 } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.USER_CANCELED) {
                   //  Log.e("billingResultCan", "canceled");
                     sharedPreferences.edit().putBoolean("enableAd", true).apply();
-                } else {
-
-                   // Log.e("billingResultOther", billingResult.getResponseCode() + " " + billingResult.getDebugMessage());
-
-                    if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED) {
-                        sharedPreferences.edit().putBoolean("enableAd", false).apply();
+                } else if(billingResult.getResponseCode() == BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED) {
+                    sharedPreferences.edit().putBoolean("enableAd", false).apply();
                      //   Log.e("Item Purchases", "ITEM_ALREADY_OWNED");
-                    } else {
-                        sharedPreferences.edit().putBoolean("enableAd", true).apply();
-                       // Log.e("Item Purchases", "ITEM_NOT_OWNED");
-                    }
-
+                }
+                else if(billingResult.getResponseCode() == BillingClient.BillingResponseCode.ITEM_NOT_OWNED){
+                    sharedPreferences.edit().putBoolean("enableAd", true).apply();
                 }
             }
         };
@@ -122,7 +116,6 @@ public class Purchases {
         }
     }
 
-
     private void startConnection() {
         billingClient.startConnection(new BillingClientStateListener() {
             @Override
@@ -132,7 +125,8 @@ public class Purchases {
                     getProducts();
 
                 } else {
-                    Log.e("billingResult", billingResult.getResponseCode() + " " + billingResult.getDebugMessage());
+                    Log.e("billingResult","Code: "+ billingResult.getResponseCode() + ". Msg: " + billingResult.getDebugMessage());
+
                 }
             }
 
@@ -145,39 +139,39 @@ public class Purchases {
     }
 
     private void getProducts() {
-        List<String> skuList = new ArrayList<>();
-        skuList.add("noad");
-        SkuDetailsParams.Builder params = SkuDetailsParams.newBuilder();
-        params.setSkusList(skuList).setType(BillingClient.SkuType.INAPP);
+
+       queryProductDetailsParams =
+                QueryProductDetailsParams.newBuilder()
+                        .setProductList(
+                                ImmutableList.of(
+                                        QueryProductDetailsParams.Product.newBuilder()
+                                                .setProductId("noadnms")
+                                                .setProductType(BillingClient.ProductType.INAPP)
+                                                .build()))
+                        .build();
 
         if (isConnected()) {
 
-            billingClient.querySkuDetailsAsync(params.build(),
-                    new SkuDetailsResponseListener() {
-                        @Override
-                        public void onSkuDetailsResponse(BillingResult billingResult,
-                                                         List<SkuDetails> skuDetailsList) {
+        billingClient.queryProductDetailsAsync(
+                queryProductDetailsParams,
+                new ProductDetailsResponseListener() {
+                    public void onProductDetailsResponse(BillingResult billingResult,
+                                                         List<ProductDetails> productDetailsList) {
+                        try {
+                            if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
 
-                          //  Log.e("DetailsResponse", billingResult.getResponseCode()
-                              //      + " " + billingResult.getDebugMessage());
-                            try {
-                                if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
-                                    skuDetails = skuDetailsList.get(0);
-
-                                 //   Log.e("Products", "count " + skuDetailsList.size() + " " + skuDetails.getTitle()
-                                        //    + " " + skuDetails.getDescription() + " " + skuDetails.getPrice());
-
-                                    if (skuDetailsList.size() > 0)
-                                        checkPurchases();
-
-                                } else
-                                    Log.e("DetailsResponse", billingResult.getResponseCode()
-                                            + " " + billingResult.getDebugMessage());
-                            } catch (IndexOutOfBoundsException exception) {
-                                Toast.makeText(context, "error", Toast.LENGTH_LONG).show();
-                            }
+                                for(ProductDetails p: productDetailsList){
+                                     checkPurchases(p);
+                                }
+                            } else
+                                Log.e("DetailsResponse", billingResult.getResponseCode()
+                                        + " " + billingResult.getDebugMessage());
+                        } catch (IndexOutOfBoundsException exception) {
+                            Toast.makeText(context, "error", Toast.LENGTH_LONG).show();
                         }
-                    });
+                    }
+                }
+        );
         } else {
             Toast.makeText(context, "Could not connect to Google Play", Toast.LENGTH_LONG).show();
         }
@@ -185,26 +179,23 @@ public class Purchases {
     }
 
 
-    public void checkPurchases() throws NullPointerException {
-        List<String> skuList = new ArrayList<>();
-        skuList.add("noad");
-        SkuDetailsParams.Builder params = SkuDetailsParams.newBuilder();
-        params.setSkusList(skuList).setType(BillingClient.SkuType.INAPP);
+    public void checkPurchases(ProductDetails productDetails) throws NullPointerException {
 
-        if (isConnected())
-            billingClient.queryPurchasesAsync(BillingClient.SkuType.INAPP, new PurchasesResponseListener() {
-                @Override
-                public void onQueryPurchasesResponse(@NonNull BillingResult billingResult, @NonNull List<Purchase> list) {
+        ImmutableList<BillingFlowParams.ProductDetailsParams> productDetailsParamsList =
+                ImmutableList.of(
+                        BillingFlowParams.ProductDetailsParams.newBuilder()
+                                // retrieve a value for "productDetails" by calling queryProductDetailsAsync()
+                                .setProductDetails(productDetails)
+                                // to get an offer token, call ProductDetails.getSubscriptionOfferDetails()
+                                // for a list of offers that are available to the user
+                                //.setOfferToken()
+                                .build()
+                );
 
-                    if (list.size() > 0) {
-                        for (Purchase p : list)
-                            handlePurchase(p);
-                    } else {
-                        sharedPreferences.edit().putBoolean("enableAd", true).apply();
-                       // Log.e("Purchase", "Not item purchase");
-                    }
-                }
-            });
+        billingFlowParams = BillingFlowParams.newBuilder()
+                .setProductDetailsParamsList(productDetailsParamsList)
+                .build();
+
     }
 
     private boolean isConnected() {
@@ -219,18 +210,9 @@ public class Purchases {
 
     public void billingFlow() throws NullPointerException {
 
-        int responseCode = -1;
+            Activity activity = (Activity) context;
+            BillingResult billingResult = billingClient.launchBillingFlow(activity, billingFlowParams);
 
-        if (skuDetails != null) {
-
-            BillingFlowParams billingFlowParams = BillingFlowParams.newBuilder()
-                    .setSkuDetails(skuDetails)
-                    .build();
-            responseCode = billingClient.launchBillingFlow((Activity) context, billingFlowParams).getResponseCode();
-
-
-        }
-      //  Log.e("ResponseCode",Integer.toString(responseCode));
 
     }
 

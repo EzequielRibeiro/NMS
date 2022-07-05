@@ -77,8 +77,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-        purchases = new Purchases(MainActivity.this);
-
         showAd = getSharedPreferences("NoAd",MODE_PRIVATE).getBoolean("showAd",true);
      /*
         fab.setOnClickListener(new View.OnClickListener() {
@@ -102,10 +100,8 @@ public class MainActivity extends AppCompatActivity {
             getSharedPreferences("rated", MODE_PRIVATE).edit().putInt("time", 0).commit();
         }
 
-
-
-        RequestConfiguration requestConfiguration = new RequestConfiguration.Builder().setTestDeviceIds(Arrays.asList("D2EB3B911E931B5E53C800624D4648CB")).build();
-        MobileAds.setRequestConfiguration(requestConfiguration);
+      //  RequestConfiguration requestConfiguration = new RequestConfiguration.Builder().setTestDeviceIds(Arrays.asList("D2EB3B911E931B5E53C800624D4648CB")).build();
+      //  MobileAds.setRequestConfiguration(requestConfiguration);
 
 
     }
@@ -244,9 +240,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void onResume() {
         super.onResume();
-        purchases = new Purchases(MainActivity.this);
-        purchases.checkPurchases();
-        showAd = getSharedPreferences("NoAd",MODE_PRIVATE).getBoolean("showAd",true);
+        try {
+            purchases = new Purchases(MainActivity.this);
+        }catch (NullPointerException e){
+            e.printStackTrace();
+        }
+        showAd = getSharedPreferences("NoAd",MODE_PRIVATE).getBoolean("enableAd",true);
 
         if(showAd) {
             loadAdInter(getApplicationContext());
@@ -343,7 +342,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case R.id.menuRemoveAd:
-                purchases.billingFlow();
+                try {
+                    purchases.billingFlow();
+                }catch (NullPointerException e){e.printStackTrace();}
                 break;
 
             case R.id.menuHelp:

@@ -1,8 +1,6 @@
 package com.portaladdress.nms.ui.main;
 
-import static com.portaladdress.nms.MainActivity.mInterstitialAd;
 import static com.portaladdress.nms.MainActivity.showInterstitial;
-
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
@@ -179,7 +177,7 @@ public class EncoderFragment extends Fragment {
                         getGlyphs(s,linearLayoutGlyphsMain,getActivity());
                         
                         
-                         if(mInterstitialAd != null)
+
                               showInterstitial(getActivity());
                         
 
