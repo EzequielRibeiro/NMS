@@ -4,11 +4,26 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import com.android.billingclient.api.AcknowledgePurchaseParams;
+import com.android.billingclient.api.AcknowledgePurchaseResponseListener;
+import com.android.billingclient.api.BillingClient;
+import com.android.billingclient.api.BillingClientStateListener;
+import com.android.billingclient.api.BillingFlowParams;
+import com.android.billingclient.api.BillingResult;
+import com.android.billingclient.api.ConsumeParams;
+import com.android.billingclient.api.ConsumeResponseListener;
+import com.android.billingclient.api.ProductDetails;
+import com.android.billingclient.api.ProductDetailsResponseListener;
+import com.android.billingclient.api.Purchase;
+import com.android.billingclient.api.PurchasesResponseListener;
+import com.android.billingclient.api.PurchasesUpdatedListener;
+import com.android.billingclient.api.QueryProductDetailsParams;
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -23,6 +38,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -41,12 +57,14 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.google.android.play.core.review.ReviewInfo;
 import com.google.android.play.core.review.ReviewManager;
 import com.google.android.play.core.review.ReviewManagerFactory;
 import com.google.android.play.core.tasks.OnFailureListener;
+import com.google.common.collect.ImmutableList;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.portaladdress.nms.ui.main.SectionsPagerAdapter;
@@ -54,13 +72,15 @@ import com.portaladdress.nms.ui.main.SectionsPagerAdapter;
 import java.util.Arrays;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements PurchasesUpdatedListener {
 
     public static InterstitialAd mInterstitialAd;
     private FirebaseAnalytics mFirebaseAnalytics;
     private AdView mAdView;
-    private Purchases purchases;
     private boolean showAd = true;
+    private BillingClient billingClient;
+    private ProductDetails productDetails;
+    private Purchase purchase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +97,8 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-        showAd = getSharedPreferences("NoAd",MODE_PRIVATE).getBoolean("showAd",true);
+        showAd = getSharedPreferences("noad",MODE_PRIVATE).getBoolean("enableAd",true);
+
      /*
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,11 +121,108 @@ public class MainActivity extends AppCompatActivity {
             getSharedPreferences("rated", MODE_PRIVATE).edit().putInt("time", 0).commit();
         }
 
-      //  RequestConfiguration requestConfiguration = new RequestConfiguration.Builder().setTestDeviceIds(Arrays.asList("D2EB3B911E931B5E53C800624D4648CB")).build();
-      //  MobileAds.setRequestConfiguration(requestConfiguration);
+        RequestConfiguration requestConfiguration = new RequestConfiguration.Builder().setTestDeviceIds(Arrays.asList("CA2976559C9489A7C3F8367D5C73ABE6")).build();
+        MobileAds.setRequestConfiguration(requestConfiguration);
 
+        billingSetup();
 
     }
+
+    private void billingSetup() {
+
+        billingClient = BillingClient.newBuilder(this)
+                .setListener(this)
+                .enablePendingPurchases()
+                .build();
+
+        billingClient.startConnection(new BillingClientStateListener() {
+
+            @Override
+            public void onBillingSetupFinished(
+                    @NonNull BillingResult billingResult) {
+
+                if (billingResult.getResponseCode() ==
+                        BillingClient.BillingResponseCode.OK) {
+                    Log.i("NMS", "OnBillingSetupFinish connected");
+                    queryProduct();
+                } else {
+                    Log.i("NMS", "OnBillingSetupFinish failed");
+                }
+            }
+
+            @Override
+            public void onBillingServiceDisconnected() {
+                Log.i("NMS", "OnBillingSetupFinish connection lost");
+            }
+        });
+    }
+    private void queryProduct() {
+
+        QueryProductDetailsParams queryProductDetailsParams =
+                QueryProductDetailsParams.newBuilder()
+                        .setProductList(
+                                ImmutableList.of(
+                                        QueryProductDetailsParams.Product.newBuilder()
+                                                .setProductId("removead1")
+                                                .setProductType(
+                                                        BillingClient.ProductType.INAPP)
+                                                .build()))
+                        .build();
+
+        billingClient.queryProductDetailsAsync(
+                queryProductDetailsParams,
+                new ProductDetailsResponseListener() {
+                    public void onProductDetailsResponse(
+                            @NonNull BillingResult billingResult,
+                            @NonNull List<ProductDetails> productDetailsList) {
+
+                        if (!productDetailsList.isEmpty()) {
+                            productDetails = productDetailsList.get(0);
+
+                        } else {
+                            Log.i("NMS", "onProductDetailsResponse: No products");
+                        }
+                    }
+                }
+        );
+    }
+
+    public void makePurchase() {
+
+        BillingFlowParams billingFlowParams =
+                BillingFlowParams.newBuilder()
+                        .setProductDetailsParamsList(
+                                ImmutableList.of(
+                                        BillingFlowParams.ProductDetailsParams.newBuilder()
+                                                .setProductDetails(productDetails)
+                                                .build()
+                                )
+                        )
+                        .build();
+
+        billingClient.launchBillingFlow(this, billingFlowParams);
+    }
+
+    public void checkPurchase(){
+        billingClient.queryPurchasesAsync(
+                BillingClient.SkuType.INAPP,
+                new PurchasesResponseListener() {
+                    @Override
+                    public void onQueryPurchasesResponse(@NonNull BillingResult billingResult, @NonNull List<Purchase> list) {
+                        if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
+                            for (Purchase purchase : list) {
+
+                                if (purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {
+                                    handlePurchase(purchase);
+                                }
+                            }
+                        }
+                    }
+                }
+        );
+    }
+
+
     private void loadAd(){
         mAdView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
@@ -240,13 +358,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void onResume() {
         super.onResume();
-        try {
-            purchases = new Purchases(MainActivity.this);
-        }catch (NullPointerException e){
-            e.printStackTrace();
-        }
-        showAd = getSharedPreferences("NoAd",MODE_PRIVATE).getBoolean("enableAd",true);
-
+       checkPurchase();
+       showAd = getSharedPreferences("noad",MODE_PRIVATE).getBoolean("enableAd",true);
         if(showAd) {
             loadAdInter(getApplicationContext());
             loadAd();
@@ -343,7 +456,7 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.menuRemoveAd:
                 try {
-                    purchases.billingFlow();
+                    makePurchase();
                 }catch (NullPointerException e){e.printStackTrace();}
                 break;
 
@@ -357,4 +470,113 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onPurchasesUpdated(BillingResult billingResult,
+                                   List<Purchase> purchases) {
+
+         SharedPreferences sharedPreferences = getSharedPreferences("noad", Context.MODE_PRIVATE);
+
+        if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK
+                && purchases != null) {
+            for (Purchase purchase : purchases) {
+                handlePurchase(purchase);
+            }
+        } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.USER_CANCELED) {
+            //  Log.e("billingResultCan", "canceled");
+            sharedPreferences.edit().putBoolean("enableAd", true).apply();
+        } else {
+
+            //    Log.e("billingResultOther", billingResult.getResponseCode() + " " + billingResult.getDebugMessage());
+
+            if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED) {
+                sharedPreferences.edit().putBoolean("enableAd", false).apply();
+                   Log.e("Item Purchases", "ITEM_ALREADY_OWNED");
+
+                try {
+                    consumePurchase();
+                }catch (Exception e){e.printStackTrace();};
+            } else {
+                sharedPreferences.edit().putBoolean("enableAd", true).apply();
+                 Log.e("Item Purchases", "ITEM_NOT_OWNED");
+            }
+
+        }
+    }
+    private void handlePurchase(Purchase purchase) {
+        SharedPreferences sharedPreferences = getSharedPreferences("noad", Context.MODE_PRIVATE);
+        if (purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {
+
+            completePurchase(purchase);
+
+            if (!purchase.isAcknowledged()) {
+
+                AcknowledgePurchaseParams acknowledgePurchaseParams =
+                        AcknowledgePurchaseParams.newBuilder()
+                                .setPurchaseToken(purchase.getPurchaseToken())
+                                .build();
+
+                AcknowledgePurchaseResponseListener acknowledgePurchaseResponseListener = new AcknowledgePurchaseResponseListener() {
+                    @Override
+                    public void onAcknowledgePurchaseResponse(BillingResult billingResult) {
+                        if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED) {
+                            sharedPreferences.edit().putBoolean("enableAd", false).apply();
+                             Log.e("Purchase", "ITEM_ALREADY_OWNED");
+                        } else {
+                            sharedPreferences.edit().putBoolean("enableAd", true).apply();
+                             Log.e("Purchase", "ITEM_NOT_OWNED");
+                        }
+                    }
+                };
+                billingClient.acknowledgePurchase(acknowledgePurchaseParams, acknowledgePurchaseResponseListener);
+            } else {
+
+                //  Log.e("Purchase", "Acknowledged");
+                if (purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {
+                    sharedPreferences.edit().putBoolean("enableAd", false).apply();
+                       Log.e("Purchase", "ITEM_ALREADY_OWNED");
+                } else {
+                        Log.e("Purchase", "ITEM_NOT_OWNED");
+                    sharedPreferences.edit().putBoolean("enableAd", true).apply();
+                }
+            }
+        } else {
+            sharedPreferences.edit().putBoolean("enableAd", true).apply();
+              Log.e("Not Purchase", "ITEM_NOT_OWNED");
+        }
+    }
+
+
+    private void completePurchase(Purchase item) {
+
+        purchase = item;
+
+        if (purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED)
+            Toast.makeText(getApplicationContext(),"Complete Purchase. Tanks!",Toast.LENGTH_LONG).show();
+
+    }
+
+    public void consumePurchase() {
+        ConsumeParams consumeParams =
+                ConsumeParams.newBuilder()
+                        .setPurchaseToken(purchase.getPurchaseToken())
+                        .build();
+
+        ConsumeResponseListener listener = new ConsumeResponseListener() {
+            @Override
+            public void onConsumeResponse(BillingResult billingResult,
+                                          @NonNull String purchaseToken) {
+                if (billingResult.getResponseCode() ==
+                        BillingClient.BillingResponseCode.OK) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                        //    Toast.makeText(getApplicationContext(),"Purchase",Toast.LENGTH_LONG).show();
+                        }
+                    });
+
+                }
+            }
+        };
+        billingClient.consumeAsync(consumeParams, listener);
+    }
 }
