@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
     private BillingClient billingClient;
     private ProductDetails productDetails;
     private Purchase purchase;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        sharedPreferences = getSharedPreferences("noad", Context.MODE_PRIVATE);
         
      /*
         fab.setOnClickListener(new View.OnClickListener() {
@@ -223,8 +225,6 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
     public void onPurchasesUpdated(BillingResult billingResult,
                                    List<Purchase> purchases) {
 
-         SharedPreferences sharedPreferences = getSharedPreferences("noad", Context.MODE_PRIVATE);
-
         if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK
                 && purchases != null) {
             for (Purchase purchase : purchases) {
@@ -252,7 +252,7 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
         }
     }
     private void handlePurchase(Purchase purchase) {
-        SharedPreferences sharedPreferences = getSharedPreferences("noad", Context.MODE_PRIVATE);
+       
         if (purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {
 
             completePurchase(purchase);
