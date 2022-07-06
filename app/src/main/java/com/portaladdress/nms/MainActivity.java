@@ -211,10 +211,8 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
                     public void onQueryPurchasesResponse(@NonNull BillingResult billingResult, @NonNull List<Purchase> list) {
                         if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
                             for (Purchase purchase : list) {
-
-                                if (purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {
-                                    handlePurchase(purchase);
-                                }
+                                   handlePurchase(purchase);
+                                
                             }
                         }
                     }
