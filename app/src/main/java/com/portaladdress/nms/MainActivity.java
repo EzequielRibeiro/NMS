@@ -554,6 +554,27 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
             Toast.makeText(getApplicationContext(),"Complete Purchase. Tanks!",Toast.LENGTH_LONG).show();
 
     }
+    
+    public void check(){
+    
+        QueryPurchaseHistoryParams queryPurchaseHistoryParams =
+        QueryPurchaseHistoryParams.newBuilder()
+                .setProductType(BillingClient.ProductType.INAPP)
+                .build();
+
+billingClient.queryPurchaseHistoryAsync(queryPurchaseHistoryParams, 
+               new PurchaseHistoryResponseListener() {
+    
+    @Override
+    public void onPurchaseHistoryResponse(@NonNull BillingResult billingResult, 
+               @NonNull List<PurchaseHistoryRecord> list) {
+        // Process purchase history
+    }
+});
+        
+
+    }
+    
 
     public void consumePurchase() {
         ConsumeParams consumeParams =
