@@ -97,8 +97,7 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-        showAd = getSharedPreferences("noad",MODE_PRIVATE).getBoolean("enableAd",true);
-
+        
      /*
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -220,6 +219,136 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
         );
     }
 
+     @Override
+    public void onPurchasesUpdated(BillingResult billingResult,
+                                   List<Purchase> purchases) {
+
+         SharedPreferences sharedPreferences = getSharedPreferences("noad", Context.MODE_PRIVATE);
+
+        if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK
+                && purchases != null) {
+            for (Purchase purchase : purchases) {
+                handlePurchase(purchase);
+            }
+        } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.USER_CANCELED) {
+            //  Log.e("billingResultCan", "canceled");
+            sharedPreferences.edit().putBoolean("enableAd", true).apply();
+        } else {
+
+            //    Log.e("billingResultOther", billingResult.getResponseCode() + " " + billingResult.getDebugMessage());
+
+            if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED) {
+                sharedPreferences.edit().putBoolean("enableAd", false).apply();
+                   Log.e("Item Purchases", "ITEM_ALREADY_OWNED");
+
+                try {
+                    consumePurchase();
+                }catch (Exception e){e.printStackTrace();};
+            } else {
+                sharedPreferences.edit().putBoolean("enableAd", true).apply();
+                 Log.e("Item Purchases", "ITEM_NOT_OWNED");
+            }
+
+        }
+    }
+    private void handlePurchase(Purchase purchase) {
+        SharedPreferences sharedPreferences = getSharedPreferences("noad", Context.MODE_PRIVATE);
+        if (purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {
+
+            completePurchase(purchase);
+
+            if (!purchase.isAcknowledged()) {
+
+                AcknowledgePurchaseParams acknowledgePurchaseParams =
+                        AcknowledgePurchaseParams.newBuilder()
+                                .setPurchaseToken(purchase.getPurchaseToken())
+                                .build();
+
+                AcknowledgePurchaseResponseListener acknowledgePurchaseResponseListener = new AcknowledgePurchaseResponseListener() {
+                    @Override
+                    public void onAcknowledgePurchaseResponse(BillingResult billingResult) {
+                        if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED) {
+                            sharedPreferences.edit().putBoolean("enableAd", false).apply();
+                             Log.e("Purchase", "ITEM_ALREADY_OWNED");
+                        } else {
+                            sharedPreferences.edit().putBoolean("enableAd", true).apply();
+                             Log.e("Purchase", "ITEM_NOT_OWNED");
+                        }
+                    }
+                };
+                billingClient.acknowledgePurchase(acknowledgePurchaseParams, acknowledgePurchaseResponseListener);
+            } else {
+
+                //  Log.e("Purchase", "Acknowledged");
+                if (purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {
+                    sharedPreferences.edit().putBoolean("enableAd", false).apply();
+                       Log.e("Purchase", "ITEM_ALREADY_OWNED");
+                } else {
+                        Log.e("Purchase", "ITEM_NOT_OWNED");
+                    sharedPreferences.edit().putBoolean("enableAd", true).apply();
+                }
+            }
+        } else {
+            sharedPreferences.edit().putBoolean("enableAd", true).apply();
+              Log.e("Not Purchase", "ITEM_NOT_OWNED");
+        }
+    }
+
+
+    private void completePurchase(Purchase item) {
+
+        purchase = item;
+
+        if (purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED)
+            Toast.makeText(getApplicationContext(),"Complete Purchase. Tanks!",Toast.LENGTH_LONG).show();
+
+    }
+    
+    public void check(){
+    
+        QueryPurchaseHistoryParams queryPurchaseHistoryParams =
+        QueryPurchaseHistoryParams.newBuilder()
+                .setProductType(BillingClient.ProductType.INAPP)
+                .build();
+
+billingClient.queryPurchaseHistoryAsync(queryPurchaseHistoryParams, 
+               new PurchaseHistoryResponseListener() {
+    
+    @Override
+    public void onPurchaseHistoryResponse(@NonNull BillingResult billingResult, 
+               @NonNull List<PurchaseHistoryRecord> list) {
+        // Process purchase history
+    }
+});
+        
+
+    }
+    
+
+    public void consumePurchase() {
+        ConsumeParams consumeParams =
+                ConsumeParams.newBuilder()
+                        .setPurchaseToken(purchase.getPurchaseToken())
+                        .build();
+
+        ConsumeResponseListener listener = new ConsumeResponseListener() {
+            @Override
+            public void onConsumeResponse(BillingResult billingResult,
+                                          @NonNull String purchaseToken) {
+                if (billingResult.getResponseCode() ==
+                        BillingClient.BillingResponseCode.OK) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                        //    Toast.makeText(getApplicationContext(),"Purchase",Toast.LENGTH_LONG).show();
+                        }
+                    });
+
+                }
+            }
+        };
+        billingClient.consumeAsync(consumeParams, listener);
+    }
 
     private void loadAd(){
         mAdView = findViewById(R.id.adView);
@@ -468,134 +597,5 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
     }
 
 
-    @Override
-    public void onPurchasesUpdated(BillingResult billingResult,
-                                   List<Purchase> purchases) {
-
-         SharedPreferences sharedPreferences = getSharedPreferences("noad", Context.MODE_PRIVATE);
-
-        if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK
-                && purchases != null) {
-            for (Purchase purchase : purchases) {
-                handlePurchase(purchase);
-            }
-        } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.USER_CANCELED) {
-            //  Log.e("billingResultCan", "canceled");
-            sharedPreferences.edit().putBoolean("enableAd", true).apply();
-        } else {
-
-            //    Log.e("billingResultOther", billingResult.getResponseCode() + " " + billingResult.getDebugMessage());
-
-            if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED) {
-                sharedPreferences.edit().putBoolean("enableAd", false).apply();
-                   Log.e("Item Purchases", "ITEM_ALREADY_OWNED");
-
-                try {
-                    consumePurchase();
-                }catch (Exception e){e.printStackTrace();};
-            } else {
-                sharedPreferences.edit().putBoolean("enableAd", true).apply();
-                 Log.e("Item Purchases", "ITEM_NOT_OWNED");
-            }
-
-        }
-    }
-    private void handlePurchase(Purchase purchase) {
-        SharedPreferences sharedPreferences = getSharedPreferences("noad", Context.MODE_PRIVATE);
-        if (purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {
-
-            completePurchase(purchase);
-
-            if (!purchase.isAcknowledged()) {
-
-                AcknowledgePurchaseParams acknowledgePurchaseParams =
-                        AcknowledgePurchaseParams.newBuilder()
-                                .setPurchaseToken(purchase.getPurchaseToken())
-                                .build();
-
-                AcknowledgePurchaseResponseListener acknowledgePurchaseResponseListener = new AcknowledgePurchaseResponseListener() {
-                    @Override
-                    public void onAcknowledgePurchaseResponse(BillingResult billingResult) {
-                        if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED) {
-                            sharedPreferences.edit().putBoolean("enableAd", false).apply();
-                             Log.e("Purchase", "ITEM_ALREADY_OWNED");
-                        } else {
-                            sharedPreferences.edit().putBoolean("enableAd", true).apply();
-                             Log.e("Purchase", "ITEM_NOT_OWNED");
-                        }
-                    }
-                };
-                billingClient.acknowledgePurchase(acknowledgePurchaseParams, acknowledgePurchaseResponseListener);
-            } else {
-
-                //  Log.e("Purchase", "Acknowledged");
-                if (purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {
-                    sharedPreferences.edit().putBoolean("enableAd", false).apply();
-                       Log.e("Purchase", "ITEM_ALREADY_OWNED");
-                } else {
-                        Log.e("Purchase", "ITEM_NOT_OWNED");
-                    sharedPreferences.edit().putBoolean("enableAd", true).apply();
-                }
-            }
-        } else {
-            sharedPreferences.edit().putBoolean("enableAd", true).apply();
-              Log.e("Not Purchase", "ITEM_NOT_OWNED");
-        }
-    }
-
-
-    private void completePurchase(Purchase item) {
-
-        purchase = item;
-
-        if (purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED)
-            Toast.makeText(getApplicationContext(),"Complete Purchase. Tanks!",Toast.LENGTH_LONG).show();
-
-    }
-    
-    public void check(){
-    
-        QueryPurchaseHistoryParams queryPurchaseHistoryParams =
-        QueryPurchaseHistoryParams.newBuilder()
-                .setProductType(BillingClient.ProductType.INAPP)
-                .build();
-
-billingClient.queryPurchaseHistoryAsync(queryPurchaseHistoryParams, 
-               new PurchaseHistoryResponseListener() {
-    
-    @Override
-    public void onPurchaseHistoryResponse(@NonNull BillingResult billingResult, 
-               @NonNull List<PurchaseHistoryRecord> list) {
-        // Process purchase history
-    }
-});
-        
-
-    }
-    
-
-    public void consumePurchase() {
-        ConsumeParams consumeParams =
-                ConsumeParams.newBuilder()
-                        .setPurchaseToken(purchase.getPurchaseToken())
-                        .build();
-
-        ConsumeResponseListener listener = new ConsumeResponseListener() {
-            @Override
-            public void onConsumeResponse(BillingResult billingResult,
-                                          @NonNull String purchaseToken) {
-                if (billingResult.getResponseCode() ==
-                        BillingClient.BillingResponseCode.OK) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                        //    Toast.makeText(getApplicationContext(),"Purchase",Toast.LENGTH_LONG).show();
-                        }
-                    });
-
-                }
-            }
-        };
-        billingClient.consumeAsync(consumeParams, listener);
-    }
+   
 }
