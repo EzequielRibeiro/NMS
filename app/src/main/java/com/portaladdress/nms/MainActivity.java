@@ -255,26 +255,36 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
           @Override
           public void onAcknowledgePurchaseResponse(BillingResult billingResult) {
 
-              if(billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK ){
-                  sharedPreferences.edit().putBoolean("enableAd", false).apply();
-                  Log.i("billingResult", "ITEM_OWNED");
-                  Toast.makeText(getApplicationContext(),"Restart the APP",Toast.LENGTH_LONG).show();
-              }
+              if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
 
+                  if (purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {
+                      sharedPreferences.edit().putBoolean("enableAd", false).apply();
+                      Log.i("billingResult", "ITEM_OWNED PURCHASED");
+                  }
+              } else if (purchase.getPurchaseState() == Purchase.PurchaseState.UNSPECIFIED_STATE) {
+                  sharedPreferences.edit().putBoolean("enableAd", true).apply();
+                  Log.i("billingResult", "ITEM_NOT_OWNED UNSPECIFIED_STATE");
+
+              } else if (purchase.getPurchaseState() == Purchase.PurchaseState.PENDING) {
+                  sharedPreferences.edit().putBoolean("enableAd", true).apply();
+                  Log.i("billingResult", "ITEM_NOT_OWNED PurchaseState.PENDING");
+              }
           }
+
+
       };
-        if (purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {
-            if (!purchase.isAcknowledged()) {
-                AcknowledgePurchaseParams acknowledgePurchaseParams =
-                        AcknowledgePurchaseParams.newBuilder()
-                                .setPurchaseToken(purchase.getPurchaseToken())
-                                .build();
-                billingClient.acknowledgePurchase(acknowledgePurchaseParams, acknowledgePurchaseResponseListener);
-            }
-        }else{
-            sharedPreferences.edit().putBoolean("enableAd", true).apply();
-            Log.e("billingResult", "ITEM_NOT_OWNED");
-        }
+      if (purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {
+          if (!purchase.isAcknowledged()) {
+              AcknowledgePurchaseParams acknowledgePurchaseParams =
+                      AcknowledgePurchaseParams.newBuilder()
+                              .setPurchaseToken(purchase.getPurchaseToken())
+                              .build();
+              billingClient.acknowledgePurchase(acknowledgePurchaseParams, acknowledgePurchaseResponseListener);
+          }
+      }else{
+          sharedPreferences.edit().putBoolean("enableAd", true).apply();
+          Log.i("billingResult", "ITEM_NOT_OWNED");
+      }
     }
 
     private void loadAd(){
