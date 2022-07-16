@@ -1,5 +1,6 @@
 package com.portaladdress.nms;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -16,6 +17,7 @@ import com.portaladdress.nms.ui.main.EncoderFragment;
 import java.io.IOException;
 import java.util.List;
 
+import static com.portaladdress.nms.PermissionCheck.checkPermission;
 import static com.portaladdress.nms.ui.main.EncoderFragment.getGlyphs;
 
 
@@ -134,7 +136,8 @@ public class GlyphsAdaptador extends ArrayAdapter<Glyphs> implements View.OnClic
 
                 View parentRow = (View) v.getParent();
                 LinearLayout linearLayout = parentRow.findViewById(R.id.linearLayoutListGlyphs);
-
+                Activity activity = (Activity) context;
+                checkPermission(activity);
                 try {
                     new SaveImageGlyphs().getPrint(linearLayout, context);
                 } catch (IOException e) {

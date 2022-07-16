@@ -1,7 +1,10 @@
 package com.portaladdress.nms.ui.main;
 
 import static com.portaladdress.nms.MainActivity.showInterstitial;
+import static com.portaladdress.nms.PermissionCheck.checkPermission;
+
 import android.annotation.SuppressLint;
+
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -94,7 +97,7 @@ public class EncoderFragment extends Fragment {
         buttonShareGlyphs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                checkPermission(getActivity());
                 try {
                     if(linearLayoutGlyphsMain.getChildCount() == 12)
 

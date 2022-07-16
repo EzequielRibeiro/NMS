@@ -20,8 +20,8 @@ android {
         applicationId "com.portaladdress.nms"
         minSdkVersion 19
         targetSdkVersion 33
-        versionCode 14
-        versionName "1.14"
+        versionCode 15
+        versionName "1.15"
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

@@ -28,15 +28,16 @@ public class SaveImageGlyphs {
 
     public void getPrint(LinearLayout content, Context context) throws IOException {
 
-        Activity activity = (Activity) context;
         content.setDrawingCacheEnabled(true);
         Bitmap bitmap = content.getDrawingCache();
         File file;
 
         if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)) {
             file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),"Glyphs/");
+
         }else{
             file = new File(Environment.DIRECTORY_PICTURES,"Glyphs/");
+
          }
         file.mkdirs();
 

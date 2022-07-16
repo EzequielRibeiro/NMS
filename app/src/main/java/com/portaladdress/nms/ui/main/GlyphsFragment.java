@@ -1,5 +1,6 @@
 package com.portaladdress.nms.ui.main;
 import static com.portaladdress.nms.MainActivity.showInterstitial;
+import static com.portaladdress.nms.PermissionCheck.checkPermission;
 
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -71,7 +72,7 @@ public class GlyphsFragment extends Fragment implements View.OnClickListener {
         buttonShareGlyphs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                checkPermission(getActivity());
                 try {
                     if(textViewGlyphsCode.length() == 12)
                       new SaveImageGlyphs().getPrint(linearLayout,getActivity());
