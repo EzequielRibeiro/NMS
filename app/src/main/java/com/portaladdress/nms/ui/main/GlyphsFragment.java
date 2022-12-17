@@ -38,6 +38,7 @@ public class GlyphsFragment extends Fragment implements View.OnClickListener {
     imageButtonA,imageButtonB,imageButtonC,imageButtonD,imageButtonE,imageButtonF;
     private Button buttonResetGlyphs,buttonShareGlyphs,buttonSaveGlyphs;
     private TextView textViewGlyphsCode, textViewGlyphsAddress;
+    LinearLayout.LayoutParams layoutParams ;
 
     public static GlyphsFragment newInstance(int index) {
         GlyphsFragment glyphsFragment = new GlyphsFragment();
@@ -57,7 +58,8 @@ public class GlyphsFragment extends Fragment implements View.OnClickListener {
         buttonResetGlyphs = view.findViewById(R.id.buttonResetGlyphs);
         buttonShareGlyphs = view.findViewById(R.id.buttonShareGlyphs);
         buttonSaveGlyphs  = view.findViewById(R.id.buttonSaveGlyphs);
-
+        layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        layoutParams.weight = 1.0f;
         buttonResetGlyphs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -177,11 +179,12 @@ public class GlyphsFragment extends Fragment implements View.OnClickListener {
         count++;
         ImageView imageView;
 
+
         switch (v.getTag().toString().charAt(0)) {
             case '0':
                 //nameGlyphs += "sunset";
                 imageView = new ImageView(getActivity());
-                imageView.setLayoutParams(new LinearLayout.LayoutParams(45,45));
+                imageView.setLayoutParams(layoutParams);
                 imageView.setImageDrawable(getResources().getDrawable(R.drawable.zero_sunset));
                 linearLayout.addView(imageView);
                 textViewGlyphsCode.setText(textViewGlyphsCode.getText().toString().concat(v.getTag().toString()));
@@ -189,7 +192,7 @@ public class GlyphsFragment extends Fragment implements View.OnClickListener {
             case '1':
                 //nameGlyphs += "bird";
                 imageView = new ImageView(getActivity());
-                imageView.setLayoutParams(new LinearLayout.LayoutParams(45,45));
+                imageView.setLayoutParams(layoutParams);
                 imageView.setImageDrawable(getResources().getDrawable(R.drawable.um_bird));
                 linearLayout.addView(imageView);
                 textViewGlyphsCode.setText(textViewGlyphsCode.getText().toString().concat(v.getTag().toString()));
@@ -197,7 +200,7 @@ public class GlyphsFragment extends Fragment implements View.OnClickListener {
             case '2':
                 //nameGlyphs += "face";
                 imageView = new ImageView(getActivity());
-                imageView.setLayoutParams(new LinearLayout.LayoutParams(45,45));
+                imageView.setLayoutParams(layoutParams);
                 imageView.setImageDrawable(getResources().getDrawable(R.drawable.dois_face));
                 linearLayout.addView(imageView);
                 textViewGlyphsCode.setText(textViewGlyphsCode.getText().toString().concat(v.getTag().toString()));
@@ -205,7 +208,7 @@ public class GlyphsFragment extends Fragment implements View.OnClickListener {
             case '3':
                 //nameGlyphs += "diplo";
                 imageView = new ImageView(getActivity());
-                imageView.setLayoutParams(new LinearLayout.LayoutParams(45,45));
+                imageView.setLayoutParams(layoutParams);
                 imageView.setImageDrawable(getResources().getDrawable(R.drawable.tres_diplo));
                 linearLayout.addView(imageView);
                 textViewGlyphsCode.setText(textViewGlyphsCode.getText().toString().concat(v.getTag().toString()));
@@ -213,7 +216,7 @@ public class GlyphsFragment extends Fragment implements View.OnClickListener {
             case '4':
                 //nameGlyphs += "eclipse";
                 imageView = new ImageView(getActivity());
-                imageView.setLayoutParams(new LinearLayout.LayoutParams(45,45));
+                imageView.setLayoutParams(layoutParams);
                 imageView.setImageDrawable(getResources().getDrawable(R.drawable.quatro_eclipse));
                 linearLayout.addView(imageView);
                 textViewGlyphsCode.setText(textViewGlyphsCode.getText().toString().concat(v.getTag().toString()));
@@ -221,7 +224,7 @@ public class GlyphsFragment extends Fragment implements View.OnClickListener {
             case '5':
                 //nameGlyphs += "balloon";
                 imageView = new ImageView(getActivity());
-                imageView.setLayoutParams(new LinearLayout.LayoutParams(45,45));
+                imageView.setLayoutParams(layoutParams);
                 imageView.setImageDrawable(getResources().getDrawable(R.drawable.cinco_ballon));
                 linearLayout.addView(imageView);
                 textViewGlyphsCode.setText(textViewGlyphsCode.getText().toString().concat(v.getTag().toString()));
@@ -229,7 +232,7 @@ public class GlyphsFragment extends Fragment implements View.OnClickListener {
             case '6':
                 //nameGlyphs += "boat";
                 imageView = new ImageView(getActivity());
-                imageView.setLayoutParams(new LinearLayout.LayoutParams(45,45));
+                imageView.setLayoutParams(layoutParams);
                 imageView.setImageDrawable(getResources().getDrawable(R.drawable.seis_boat));
                 linearLayout.addView(imageView);
                 textViewGlyphsCode.setText(textViewGlyphsCode.getText().toString().concat(v.getTag().toString()));
@@ -237,7 +240,7 @@ public class GlyphsFragment extends Fragment implements View.OnClickListener {
             case '7':
                 //nameGlyphs += "bug";
                 imageView = new ImageView(getActivity());
-                imageView.setLayoutParams(new LinearLayout.LayoutParams(45,45));
+                imageView.setLayoutParams(layoutParams);
                 imageView.setImageDrawable(getResources().getDrawable(R.drawable.sete_bug));
                 linearLayout.addView(imageView);
                 textViewGlyphsCode.setText(textViewGlyphsCode.getText().toString().concat(v.getTag().toString()));
@@ -245,7 +248,7 @@ public class GlyphsFragment extends Fragment implements View.OnClickListener {
             case '8':
                 //nameGlyphs += "dragonfly";
                 imageView = new ImageView(getActivity());
-                imageView.setLayoutParams(new LinearLayout.LayoutParams(45,45));
+                imageView.setLayoutParams(layoutParams);
                 imageView.setImageDrawable(getResources().getDrawable(R.drawable.oito_dragonfly));
                 linearLayout.addView(imageView);
                 textViewGlyphsCode.setText(textViewGlyphsCode.getText().toString().concat(v.getTag().toString()));
@@ -253,7 +256,7 @@ public class GlyphsFragment extends Fragment implements View.OnClickListener {
             case '9':
                 //nameGlyphs += "galaxy";
                 imageView = new ImageView(getActivity());
-                imageView.setLayoutParams(new LinearLayout.LayoutParams(45,45));
+                imageView.setLayoutParams(layoutParams);
                 imageView.setImageDrawable(getResources().getDrawable(R.drawable.nove_galaxy));
                 linearLayout.addView(imageView);
                 textViewGlyphsCode.setText(textViewGlyphsCode.getText().toString().concat(v.getTag().toString()));
@@ -261,7 +264,7 @@ public class GlyphsFragment extends Fragment implements View.OnClickListener {
             case 'A':
                 //nameGlyphs += "voxel";
                 imageView = new ImageView(getActivity());
-                imageView.setLayoutParams(new LinearLayout.LayoutParams(45,45));
+                imageView.setLayoutParams(layoutParams);
                 imageView.setImageDrawable(getResources().getDrawable(R.drawable.a_voxel));
                 linearLayout.addView(imageView);
                 textViewGlyphsCode.setText(textViewGlyphsCode.getText().toString().concat(v.getTag().toString()));
@@ -269,7 +272,7 @@ public class GlyphsFragment extends Fragment implements View.OnClickListener {
             case 'B':
                 //nameGlyphs += "fish";
                 imageView = new ImageView(getActivity());
-                imageView.setLayoutParams(new LinearLayout.LayoutParams(45,45));
+                imageView.setLayoutParams(layoutParams);
                 imageView.setImageDrawable(getResources().getDrawable(R.drawable.b_fish));
                 linearLayout.addView(imageView);
                 textViewGlyphsCode.setText(textViewGlyphsCode.getText().toString().concat(v.getTag().toString()));
@@ -277,7 +280,7 @@ public class GlyphsFragment extends Fragment implements View.OnClickListener {
             case 'C':
                 //nameGlyphs += "tent";
                 imageView = new ImageView(getActivity());
-                imageView.setLayoutParams(new LinearLayout.LayoutParams(45,45));
+                imageView.setLayoutParams(layoutParams);
                 imageView.setImageDrawable(getResources().getDrawable(R.drawable.c_tent));
                 linearLayout.addView(imageView);
                 textViewGlyphsCode.setText(textViewGlyphsCode.getText().toString().concat(v.getTag().toString()));
@@ -285,7 +288,7 @@ public class GlyphsFragment extends Fragment implements View.OnClickListener {
             case 'D':
                 //nameGlyphs += "rocket";
                 imageView = new ImageView(getActivity());
-                imageView.setLayoutParams(new LinearLayout.LayoutParams(45,45));
+                imageView.setLayoutParams(layoutParams);
                 imageView.setImageDrawable(getResources().getDrawable(R.drawable.d_rocket));
                 linearLayout.addView(imageView);
                 textViewGlyphsCode.setText(textViewGlyphsCode.getText().toString().concat(v.getTag().toString()));
@@ -293,7 +296,7 @@ public class GlyphsFragment extends Fragment implements View.OnClickListener {
             case 'E':
                 //nameGlyphs += "tree";
                 imageView = new ImageView(getActivity());
-                imageView.setLayoutParams(new LinearLayout.LayoutParams(45,45));
+                imageView.setLayoutParams(layoutParams);
                 imageView.setImageDrawable(getResources().getDrawable(R.drawable.e_tree));
                 linearLayout.addView(imageView);
                 textViewGlyphsCode.setText(textViewGlyphsCode.getText().toString().concat(v.getTag().toString()));
@@ -301,7 +304,7 @@ public class GlyphsFragment extends Fragment implements View.OnClickListener {
             case 'F':
                 //nameGlyphs += "atlas";
                 imageView = new ImageView(getActivity());
-                imageView.setLayoutParams(new LinearLayout.LayoutParams(45,45));
+                imageView.setLayoutParams(layoutParams);
                 imageView.setImageDrawable(getResources().getDrawable(R.drawable.f_atlas));
                 linearLayout.addView(imageView);
                 textViewGlyphsCode.setText(textViewGlyphsCode.getText().toString().concat(v.getTag().toString()));

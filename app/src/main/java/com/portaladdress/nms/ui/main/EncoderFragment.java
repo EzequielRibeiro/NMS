@@ -304,6 +304,8 @@ public class EncoderFragment extends Fragment {
     public static void getGlyphs(CharSequence charSequence, LinearLayout linearLayout, Context context) {
 
         ImageView imageView;
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        layoutParams.weight = 1.0f;
 
         if(linearLayout.getChildCount() > 0) {
             linearLayout.removeAllViews();
@@ -316,7 +318,7 @@ public class EncoderFragment extends Fragment {
                 case '0':
                     //nameGlyphs += "sunset";
                     imageView = new ImageView(context);
-                    imageView.setLayoutParams(new LinearLayout.LayoutParams(45, 45));
+                    imageView.setLayoutParams(layoutParams);
                     imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.zero_sunset));
                     linearLayout.addView(imageView);
 
@@ -324,7 +326,7 @@ public class EncoderFragment extends Fragment {
                 case '1':
                     //nameGlyphs += "bird";
                     imageView = new ImageView(context);
-                    imageView.setLayoutParams(new LinearLayout.LayoutParams(45, 45));
+                    imageView.setLayoutParams(layoutParams);
                     imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.um_bird));
                     linearLayout.addView(imageView);
 
@@ -332,7 +334,7 @@ public class EncoderFragment extends Fragment {
                 case '2':
                     //nameGlyphs += "face";
                     imageView = new ImageView(context);
-                    imageView.setLayoutParams(new LinearLayout.LayoutParams(45, 45));
+                    imageView.setLayoutParams(layoutParams);
                     imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.dois_face));
                     linearLayout.addView(imageView);
 
@@ -340,7 +342,7 @@ public class EncoderFragment extends Fragment {
                 case '3':
                     //nameGlyphs += "diplo";
                     imageView = new ImageView(context);
-                    imageView.setLayoutParams(new LinearLayout.LayoutParams(45, 45));
+                    imageView.setLayoutParams(layoutParams);
                     imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.tres_diplo));
                     linearLayout.addView(imageView);
 
@@ -348,7 +350,7 @@ public class EncoderFragment extends Fragment {
                 case '4':
                     //nameGlyphs += "eclipse";
                     imageView = new ImageView(context);
-                    imageView.setLayoutParams(new LinearLayout.LayoutParams(45, 45));
+                    imageView.setLayoutParams(layoutParams);
                     imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.quatro_eclipse));
                     linearLayout.addView(imageView);
 
@@ -356,7 +358,7 @@ public class EncoderFragment extends Fragment {
                 case '5':
                     //nameGlyphs += "balloon";
                     imageView = new ImageView(context);
-                    imageView.setLayoutParams(new LinearLayout.LayoutParams(45, 45));
+                    imageView.setLayoutParams(layoutParams);
                     imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.cinco_ballon));
                     linearLayout.addView(imageView);
 
@@ -364,7 +366,7 @@ public class EncoderFragment extends Fragment {
                 case '6':
                     //nameGlyphs += "boat";
                     imageView = new ImageView(context);
-                    imageView.setLayoutParams(new LinearLayout.LayoutParams(45, 45));
+                    imageView.setLayoutParams(layoutParams);
                     imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.seis_boat));
                     linearLayout.addView(imageView);
 
@@ -372,7 +374,7 @@ public class EncoderFragment extends Fragment {
                 case '7':
                     //nameGlyphs += "bug";
                     imageView = new ImageView(context);
-                    imageView.setLayoutParams(new LinearLayout.LayoutParams(45, 45));
+                    imageView.setLayoutParams(layoutParams);
                     imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.sete_bug));
                     linearLayout.addView(imageView);
 
@@ -380,7 +382,7 @@ public class EncoderFragment extends Fragment {
                 case '8':
                     //nameGlyphs += "dragonfly";
                     imageView = new ImageView(context);
-                    imageView.setLayoutParams(new LinearLayout.LayoutParams(45, 45));
+                    imageView.setLayoutParams(layoutParams);
                     imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.oito_dragonfly));
                     linearLayout.addView(imageView);
 
@@ -388,7 +390,7 @@ public class EncoderFragment extends Fragment {
                 case '9':
                     //nameGlyphs += "galaxy";
                     imageView = new ImageView(context);
-                    imageView.setLayoutParams(new LinearLayout.LayoutParams(45, 45));
+                    imageView.setLayoutParams(layoutParams);
                     imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.nove_galaxy));
                     linearLayout.addView(imageView);
 
@@ -396,7 +398,7 @@ public class EncoderFragment extends Fragment {
                 case 'A':
                     //nameGlyphs += "voxel";
                     imageView = new ImageView(context);
-                    imageView.setLayoutParams(new LinearLayout.LayoutParams(45, 45));
+                    imageView.setLayoutParams(layoutParams);
                     imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.a_voxel));
                     linearLayout.addView(imageView);
 
@@ -404,7 +406,7 @@ public class EncoderFragment extends Fragment {
                 case 'B':
                     //nameGlyphs += "fish";
                     imageView = new ImageView(context);
-                    imageView.setLayoutParams(new LinearLayout.LayoutParams(45, 45));
+                    imageView.setLayoutParams(layoutParams);
                     imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.b_fish));
                     linearLayout.addView(imageView);
 
@@ -412,7 +414,7 @@ public class EncoderFragment extends Fragment {
                 case 'C':
                     //nameGlyphs += "tent";
                     imageView = new ImageView(context);
-                    imageView.setLayoutParams(new LinearLayout.LayoutParams(45, 45));
+                    imageView.setLayoutParams(layoutParams);
                     imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.c_tent));
                     linearLayout.addView(imageView);
 
@@ -420,7 +422,7 @@ public class EncoderFragment extends Fragment {
                 case 'D':
                     //nameGlyphs += "rocket";
                     imageView = new ImageView(context);
-                    imageView.setLayoutParams(new LinearLayout.LayoutParams(45, 45));
+                    imageView.setLayoutParams(layoutParams);
                     imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.d_rocket));
                     linearLayout.addView(imageView);
 
@@ -428,7 +430,7 @@ public class EncoderFragment extends Fragment {
                 case 'E':
                     //nameGlyphs += "tree";
                     imageView = new ImageView(context);
-                    imageView.setLayoutParams(new LinearLayout.LayoutParams(45, 45));
+                    imageView.setLayoutParams(layoutParams);
                     imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.e_tree));
                     linearLayout.addView(imageView);
 
@@ -436,7 +438,7 @@ public class EncoderFragment extends Fragment {
                 case 'F':
                     //nameGlyphs += "atlas";
                     imageView = new ImageView(context);
-                    imageView.setLayoutParams(new LinearLayout.LayoutParams(45, 45));
+                    imageView.setLayoutParams(layoutParams);
                     imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.f_atlas));
                     linearLayout.addView(imageView);
 

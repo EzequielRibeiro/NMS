@@ -2,6 +2,8 @@ package com.portaladdress.nms;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.view.LayoutInflater;
@@ -55,6 +57,31 @@ public class GlyphsAdaptador extends ArrayAdapter<Glyphs> implements View.OnClic
 
         listContent.textViewComments = convertView.findViewById(R.id.textViewComments);
         listContent.textViewComments.setText(glyphs.getComments());
+
+        listContent.textViewCodeList.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                ClipboardManager clipboard = (ClipboardManager) getContext()
+                        .getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("Hexa Code",listContent.textViewCodeList.getText());
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(getContext(), "copied to clipboard", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
+
+        listContent.textViewComments.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                ClipboardManager clipboard = (ClipboardManager) getContext()
+                        .getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("Comments",listContent.textViewComments.getText());
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(getContext(), "copied to clipboard", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
+
 
         listContent.linearLayoutListGlyphs = convertView.findViewById(R.id.linearLayoutListGlyphs);
 

@@ -589,10 +589,13 @@
     <LinearLayout
         android:id="@+id/linearLayoutGlyphs"
         android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:background="@drawable/background"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:background="@null"
         android:gravity="center"
+        android:minHeight="50dp"
         android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/textView17"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView9" />

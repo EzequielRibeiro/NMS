@@ -1,14 +1,13 @@
 package com.portaladdress.nms;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Environment;
-import android.util.Log;
 import android.widget.LinearLayout;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,10 +15,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
-
 import static android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
-import static androidx.core.content.FileProvider.getUriForFile;
-
 import androidx.core.content.FileProvider;
 
 
@@ -28,8 +24,12 @@ public class SaveImageGlyphs {
 
     public void getPrint(LinearLayout content, Context context) throws IOException {
 
+
         content.setDrawingCacheEnabled(true);
+        content.buildDrawingCache(true);
         Bitmap bitmap = content.getDrawingCache();
+
+        content.setDrawingCacheEnabled(false);
         File file;
 
         if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)) {
@@ -48,14 +48,11 @@ public class SaveImageGlyphs {
         try
         {
             fileOutputStream = new FileOutputStream(fileGlyphs);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 90, fileOutputStream);
             fileOutputStream.flush();
             fileOutputStream.close();
 
-        } catch (FileNotFoundException e)
-        {
-            e.printStackTrace();
-        } catch (IOException e)
+        } catch (Exception e)
         {
             e.printStackTrace();
         }

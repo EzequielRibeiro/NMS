@@ -3,40 +3,40 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/common_google_signin_btn_text_light_pressed"
     android:gravity="center"
-    android:background="@color/cardview_dark_background"
     tools:context=".ui.main.SaveFragment">
 
     <Button
         android:id="@+id/buttonView"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:background="@android:drawable/ic_menu_set_as"
         app:backgroundTint="@color/teal_200"
         app:layout_constraintBottom_toTopOf="@+id/linearLayoutListGlyphs"
         app:layout_constraintEnd_toStartOf="@+id/buttonDelete"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
     <Button
         android:id="@+id/buttonDelete"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:background="@android:drawable/ic_menu_delete"
         app:backgroundTint="@color/teal_200"
         app:layout_constraintBottom_toTopOf="@+id/linearLayoutListGlyphs"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
     <LinearLayout
         android:id="@+id/linearLayoutListGlyphs"
         android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:background="@color/cardview_dark_background"
+        android:layout_height="wrap_content"
+        android:background="@color/common_google_signin_btn_text_light_pressed"
         android:gravity="center"
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/textViewComments"
@@ -49,25 +49,35 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginBottom="5dp"
         android:textColor="@color/white"
+        android:textIsSelectable="true"
+        app:autoSizeMinTextSize="16dp"
+        app:autoSizeStepGranularity="4dp"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayoutListGlyphs" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayoutListGlyphs"
+        tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
     <TextView
         android:id="@+id/textViewCodeList"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
         android:textColor="@color/teal_700"
         android:textIsSelectable="true"
+        app:autoSizeMinTextSize="16dp"
+        app:autoSizeStepGranularity="4dp"
+        app:autoSizeTextType="uniform"
         app:layout_constraintBottom_toTopOf="@+id/linearLayoutListGlyphs"
+        app:layout_constraintEnd_toStartOf="@+id/buttonView"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
