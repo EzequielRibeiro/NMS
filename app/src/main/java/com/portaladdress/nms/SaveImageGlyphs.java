@@ -33,10 +33,10 @@ public class SaveImageGlyphs {
         File file;
 
         if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)) {
-            file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),"Glyphs/");
+            file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),"/");
 
         }else{
-            file = new File(Environment.DIRECTORY_PICTURES,"Glyphs/");
+            file = new File(Environment.DIRECTORY_PICTURES,"/");
 
          }
         file.mkdirs();
