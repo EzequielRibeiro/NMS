@@ -112,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
         MobileAds.setRequestConfiguration(requestConfiguration);
 
         billingSetup();
+        PermissionCheck.checkPermission(MainActivity.this);
 
     }
 
@@ -405,8 +406,6 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
 
     public void onResume() {
         super.onResume();
-
-        PermissionCheck.checkPermission(MainActivity.this);
 
         showAd = getSharedPreferences("noad",MODE_PRIVATE).getBoolean("enableAd",true);
         if(showAd) {

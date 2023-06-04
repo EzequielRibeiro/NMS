@@ -31,8 +31,8 @@ public class PermissionCheck {
                     permissions = new ArrayList<>();
                 }
                 permissions.add(Manifest.permission.CAMERA);
-            }
-            */
+            }*/
+
             if (context.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 if (permissions == null) {
                     permissions = new ArrayList<>();

@@ -27,9 +27,9 @@ public class SaveImageGlyphs {
 
         content.setDrawingCacheEnabled(true);
         content.buildDrawingCache(true);
-        Bitmap bitmap = content.getDrawingCache();
+        Bitmap bitmap = content.getDrawingCache(true).copy(Bitmap.Config.RGB_565, false);
 
-        content.setDrawingCacheEnabled(false);
+        content.destroyDrawingCache();
         File file;
 
         if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)) {
@@ -58,7 +58,8 @@ public class SaveImageGlyphs {
         }
 
         Uri uri =  FileProvider.getUriForFile(Objects.requireNonNull(context),
-                BuildConfig.APPLICATION_ID, fileGlyphs);
+                BuildConfig.APPLICATION_ID+".provider", fileGlyphs);
+
 
         Intent shareIntent = new Intent();
         shareIntent.addFlags(FLAG_GRANT_WRITE_URI_PERMISSION);
