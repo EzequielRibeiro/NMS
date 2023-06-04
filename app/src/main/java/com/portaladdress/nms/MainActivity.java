@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import com.android.billingclient.api.AcknowledgePurchaseParams;
 import com.android.billingclient.api.AcknowledgePurchaseResponseListener;
@@ -38,10 +39,13 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.provider.Settings;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -68,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
     private BillingClient billingClient;
     private ProductDetails productDetails;
     private SharedPreferences sharedPreferences;
+    final public static int PERMISSION_REQUEST_CODE = 42;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,7 +117,6 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
         MobileAds.setRequestConfiguration(requestConfiguration);
 
         billingSetup();
-        PermissionCheck.checkPermission(MainActivity.this);
 
     }
 
@@ -144,6 +148,7 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
             }
         });
     }
+
     private void queryProduct() {
 
         QueryProductDetailsParams queryProductDetailsParams =
@@ -191,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
         billingClient.launchBillingFlow(this, billingFlowParams);
     }
 
-    public void checkPurchase(){
+    public void checkPurchase() {
 
         billingClient.queryPurchasesAsync(
                 QueryPurchasesParams.newBuilder()
@@ -201,8 +206,8 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
                     public void onQueryPurchasesResponse(BillingResult billingResult, @NonNull List<Purchase> purchases) {
                         if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK
                                 && purchases != null) {
-                            for (Purchase purchase :purchases) {
-                                   handlePurchase(purchase);
+                            for (Purchase purchase : purchases) {
+                                handlePurchase(purchase);
                             }
                         }
 
@@ -212,7 +217,7 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
 
     }
 
-     @Override
+    @Override
     public void onPurchasesUpdated(BillingResult billingResult,
                                    List<Purchase> purchases) {
 
@@ -224,58 +229,57 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
         } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.USER_CANCELED) {
             Log.i("billingResultCan", "canceled");
             sharedPreferences.edit().putBoolean("enableAd", true).apply();
-        } else if(billingResult.getResponseCode() == BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED){
+        } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED) {
             Log.i("billingResultCan", "ITEM_ALREADY_OWNED");
             sharedPreferences.edit().putBoolean("enableAd", false).apply();
         }
     }
 
 
+    private void handlePurchase(Purchase purchase) {
+
+        AcknowledgePurchaseResponseListener acknowledgePurchaseResponseListener = new AcknowledgePurchaseResponseListener() {
+            @Override
+            public void onAcknowledgePurchaseResponse(BillingResult billingResult) {
+
+                if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
+
+                    if (purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {
+                        sharedPreferences.edit().putBoolean("enableAd", false).apply();
+                        Log.i("billingResult", "ITEM_OWNED PURCHASED");
+                    }
+                } else if (purchase.getPurchaseState() == Purchase.PurchaseState.UNSPECIFIED_STATE) {
+                    sharedPreferences.edit().putBoolean("enableAd", true).apply();
+                    Log.i("billingResult", "ITEM_NOT_OWNED UNSPECIFIED_STATE");
+
+                } else if (purchase.getPurchaseState() == Purchase.PurchaseState.PENDING) {
+                    sharedPreferences.edit().putBoolean("enableAd", true).apply();
+                    Log.i("billingResult", "ITEM_NOT_OWNED PurchaseState.PENDING");
+                }
+            }
 
 
-  private void handlePurchase(Purchase purchase) {
-
-      AcknowledgePurchaseResponseListener acknowledgePurchaseResponseListener = new AcknowledgePurchaseResponseListener() {
-          @Override
-          public void onAcknowledgePurchaseResponse(BillingResult billingResult) {
-
-              if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
-
-                  if (purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {
-                      sharedPreferences.edit().putBoolean("enableAd", false).apply();
-                      Log.i("billingResult", "ITEM_OWNED PURCHASED");
-                  }
-              } else if (purchase.getPurchaseState() == Purchase.PurchaseState.UNSPECIFIED_STATE) {
-                  sharedPreferences.edit().putBoolean("enableAd", true).apply();
-                  Log.i("billingResult", "ITEM_NOT_OWNED UNSPECIFIED_STATE");
-
-              } else if (purchase.getPurchaseState() == Purchase.PurchaseState.PENDING) {
-                  sharedPreferences.edit().putBoolean("enableAd", true).apply();
-                  Log.i("billingResult", "ITEM_NOT_OWNED PurchaseState.PENDING");
-              }
-          }
-
-
-      };
-      if (purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {
-          if (!purchase.isAcknowledged()) {
-              AcknowledgePurchaseParams acknowledgePurchaseParams =
-                      AcknowledgePurchaseParams.newBuilder()
-                              .setPurchaseToken(purchase.getPurchaseToken())
-                              .build();
-              billingClient.acknowledgePurchase(acknowledgePurchaseParams, acknowledgePurchaseResponseListener);
-          }
-      }else{
-          sharedPreferences.edit().putBoolean("enableAd", true).apply();
-          Log.i("billingResult", "ITEM_NOT_OWNED");
-      }
+        };
+        if (purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {
+            if (!purchase.isAcknowledged()) {
+                AcknowledgePurchaseParams acknowledgePurchaseParams =
+                        AcknowledgePurchaseParams.newBuilder()
+                                .setPurchaseToken(purchase.getPurchaseToken())
+                                .build();
+                billingClient.acknowledgePurchase(acknowledgePurchaseParams, acknowledgePurchaseResponseListener);
+            }
+        } else {
+            sharedPreferences.edit().putBoolean("enableAd", true).apply();
+            Log.i("billingResult", "ITEM_NOT_OWNED");
+        }
     }
 
-    private void loadAd(){
+    private void loadAd() {
         mAdView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
     }
+
     public static void loadAdInter(Context context) {
         AdRequest adRequest = new AdRequest.Builder().build();
         String id = context.getString(R.string.inters_ad_unit_id);
@@ -286,19 +290,20 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
                     public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
                         mInterstitialAd = interstitialAd;
                         interstitialAdListner();
-                        Log.i("InterstitialAd","loaded");
+                        Log.i("InterstitialAd", "loaded");
                     }
 
                     @Override
                     public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
                         mInterstitialAd = null;
-                        Log.i("InterstitialAd","Failed: "+ loadAdError.toString());
+                        Log.i("InterstitialAd", "Failed: " + loadAdError.toString());
                     }
                 });
 
     }
-    private static void interstitialAdListner(){
-        mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback(){
+
+    private static void interstitialAdListner() {
+        mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
             @Override
             public void onAdDismissedFullScreenContent() {
                 // Called when fullscreen content is dismissed.
@@ -326,7 +331,7 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
 
     }
 
-    public static void showInterstitial(Context context){
+    public static void showInterstitial(Context context) {
 
         Activity activity = (Activity) context;
         if (mInterstitialAd != null) {
@@ -407,14 +412,63 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
     public void onResume() {
         super.onResume();
 
-        showAd = getSharedPreferences("noad",MODE_PRIVATE).getBoolean("enableAd",true);
-        if(showAd) {
+        showAd = getSharedPreferences("noad", MODE_PRIVATE).getBoolean("enableAd", true);
+        if (showAd) {
             loadAdInter(getApplicationContext());
             loadAd();
         }
 
 
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode) {
+            case PERMISSION_REQUEST_CODE:
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 2 &&
+                        grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                        grantResults[1] == PackageManager.PERMISSION_GRANTED &&
+                        grantResults[2] == PackageManager.PERMISSION_GRANTED) {
+
+                } else {
+                        AlertDialog alertDialog = null;
+                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                        //builder.setTitle("Confirm exit");
+                        builder.setTitle(R.string.app_name);
+                        builder.setIcon(R.mipmap.ic_launcher_round);
+                        builder.setMessage("The app needs you to grant permission to create an image.");
+                        builder.setCancelable(false);
+                        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                                        Uri uri = Uri.fromParts("package", getPackageName(), null);
+                                        intent.setData(uri);
+                                        startActivity(intent);
+
+                                    }
+                                })
+                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.cancel();
+                                    }
+                                });
+                        alertDialog = builder.create();
+                        alertDialog.getWindow().setGravity(Gravity.CENTER);
+                        alertDialog.show();
+
+                }
+                return;
+        }
+
+    }
+
+
+
     @Override
     public void onBackPressed(){
      // super.onBackPressed();
@@ -517,6 +571,8 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
         }
         return true;
     }
+
+
 
 
    

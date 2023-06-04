@@ -2,6 +2,7 @@ package com.portaladdress.nms.ui.main;
 
 import static com.portaladdress.nms.MainActivity.showInterstitial;
 import static com.portaladdress.nms.PermissionCheck.checkPermission;
+import static com.portaladdress.nms.PermissionCheck.requestPermission;
 
 import android.annotation.SuppressLint;
 
@@ -35,6 +36,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.portaladdress.nms.DBAdapter;
 import com.portaladdress.nms.Glyphs;
 import com.portaladdress.nms.GlyphsAdaptador;
+import com.portaladdress.nms.PermissionCheck;
 import com.portaladdress.nms.R;
 import com.portaladdress.nms.SaveImageGlyphs;
 
@@ -100,8 +102,9 @@ public class EncoderFragment extends Fragment {
                 checkPermission(getActivity());
                 try {
                     if(linearLayoutGlyphsMain.getChildCount() == 12)
-
-                        new SaveImageGlyphs().getPrint(linearLayoutGlyphsMain,getActivity());
+                        if(PermissionCheck.checkPermission(getActivity()))
+                           new SaveImageGlyphs().getPrint(linearLayoutGlyphsMain,getActivity());
+                        else requestPermission(getActivity());
 
                 } catch (IOException e) {
                     e.printStackTrace();

@@ -164,9 +164,11 @@ public class GlyphsAdaptador extends ArrayAdapter<Glyphs> implements View.OnClic
                 View parentRow = (View) v.getParent();
                 LinearLayout linearLayout = parentRow.findViewById(R.id.linearLayoutListGlyphs);
                 Activity activity = (Activity) context;
-                checkPermission(activity);
+
                 try {
-                    new SaveImageGlyphs().getPrint(linearLayout, context);
+                    if(PermissionCheck.checkPermission(activity))
+                       new SaveImageGlyphs().getPrint(linearLayout, context);
+                    else PermissionCheck.requestPermission(activity);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

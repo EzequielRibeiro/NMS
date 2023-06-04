@@ -23,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.portaladdress.nms.Glyphs;
+import com.portaladdress.nms.PermissionCheck;
 import com.portaladdress.nms.R;
 import com.portaladdress.nms.SaveImageGlyphs;
 
@@ -77,7 +78,9 @@ public class GlyphsFragment extends Fragment implements View.OnClickListener {
                 checkPermission(getActivity());
                 try {
                     if(textViewGlyphsCode.length() == 12)
-                      new SaveImageGlyphs().getPrint(linearLayout,getActivity());
+                     if(PermissionCheck.checkPermission(getActivity()))
+                          new SaveImageGlyphs().getPrint(linearLayout,getActivity());
+                     else PermissionCheck.requestPermission(getActivity());
 
                 } catch (IOException e) {
                     e.printStackTrace();
