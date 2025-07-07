@@ -16,12 +16,14 @@ import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.BillingClientStateListener;
 import com.android.billingclient.api.BillingFlowParams;
 import com.android.billingclient.api.BillingResult;
+import com.android.billingclient.api.PendingPurchasesParams;
 import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.ProductDetailsResponseListener;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchasesResponseListener;
 import com.android.billingclient.api.PurchasesUpdatedListener;
 import com.android.billingclient.api.QueryProductDetailsParams;
+import com.android.billingclient.api.QueryProductDetailsResult;
 import com.android.billingclient.api.QueryPurchasesParams;
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
@@ -32,6 +34,9 @@ import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.RequestConfiguration;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import androidx.annotation.NonNull;
@@ -54,7 +59,6 @@ import android.widget.TextView;
 import com.google.android.play.core.review.ReviewInfo;
 import com.google.android.play.core.review.ReviewManager;
 import com.google.android.play.core.review.ReviewManagerFactory;
-import com.google.android.play.core.tasks.OnFailureListener;
 import com.google.common.collect.ImmutableList;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
@@ -124,7 +128,8 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
 
         billingClient = BillingClient.newBuilder(this)
                 .setListener(this)
-                .enablePendingPurchases()
+                .enablePendingPurchases(PendingPurchasesParams.newBuilder().enableOneTimeProducts().build())
+                .enableAutoServiceReconnection()
                 .build();
 
         billingClient.startConnection(new BillingClientStateListener() {
@@ -160,11 +165,26 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
                                                 .setProductType(
                                                         BillingClient.ProductType.INAPP)
                                                 .build()))
+
                         .build();
 
         billingClient.queryProductDetailsAsync(
                 queryProductDetailsParams,
                 new ProductDetailsResponseListener() {
+
+                    @Override
+                    public void onProductDetailsResponse(@NonNull BillingResult billingResult, @NonNull QueryProductDetailsResult queryProductDetailsResult) {
+
+                        if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK){
+                            Log.d("NMS", "Billing response OK");
+                            productDetails = queryProductDetailsResult.getProductDetailsList().get(0);
+                        } else{
+                            Log.e("NMS", billingResult.getDebugMessage());
+                            billingSetup();
+
+                        }
+                    }
+
                     public void onProductDetailsResponse(
                             @NonNull BillingResult billingResult,
                             @NonNull List<ProductDetails> productDetailsList) {
@@ -182,18 +202,32 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
 
     public void makePurchase() {
 
-        BillingFlowParams billingFlowParams =
-                BillingFlowParams.newBuilder()
-                        .setProductDetailsParamsList(
-                                ImmutableList.of(
-                                        BillingFlowParams.ProductDetailsParams.newBuilder()
-                                                .setProductDetails(productDetails)
-                                                .build()
-                                )
-                        )
-                        .build();
+        BillingFlowParams billingFlowParams;
 
-        billingClient.launchBillingFlow(this, billingFlowParams);
+
+        ImmutableList<BillingFlowParams.ProductDetailsParams> productDetailsParamsList =
+                ImmutableList.of(
+                        BillingFlowParams.ProductDetailsParams.newBuilder()
+                                // retrieve a value for "productDetails" by calling queryProductDetailsAsync()
+                                .setProductDetails(productDetails)
+                                // Get the offer token:
+                                // a. For one-time products, call ProductDetails.getOneTimePurchaseOfferDetailsList()
+                                // for a list of offers that are available to the user.
+                                // b. For subscriptions, call ProductDetails.subscriptionOfferDetails()
+                                // for a list of offers that are available to the user.
+
+                                .build()
+                );
+
+
+
+
+        billingFlowParams = BillingFlowParams.newBuilder()
+                .setProductDetailsParamsList(productDetailsParamsList)
+                .build();
+
+// Launch the billing flow
+        BillingResult billingResult = billingClient.launchBillingFlow(MainActivity.this, billingFlowParams);
     }
 
     public void checkPurchase() {
@@ -368,17 +402,17 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
     private void rateApp(final Activity activity) throws Exception {
         final ReviewManager reviewManager = ReviewManagerFactory.create(activity);
         //reviewManager = new FakeReviewManager(this);
-        com.google.android.play.core.tasks.Task<ReviewInfo> request = reviewManager.requestReviewFlow();
+        Task<ReviewInfo> request = reviewManager.requestReviewFlow();
 
-        request.addOnCompleteListener(new com.google.android.play.core.tasks.OnCompleteListener<ReviewInfo>() {
+        request.addOnCompleteListener(new OnCompleteListener<ReviewInfo>() {
             @Override
-            public void onComplete(com.google.android.play.core.tasks.Task<ReviewInfo> task) {
+            public void onComplete(Task<ReviewInfo> task) {
                 if (task.isSuccessful()) {
                     ReviewInfo reviewInfo = task.getResult();
-                    com.google.android.play.core.tasks.Task<Void> flow = reviewManager.launchReviewFlow(activity, reviewInfo);
-                    flow.addOnCompleteListener(new com.google.android.play.core.tasks.OnCompleteListener<Void>() {
+                    Task<Void> flow = reviewManager.launchReviewFlow(activity, reviewInfo);
+                    flow.addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
-                        public void onComplete(com.google.android.play.core.tasks.Task<Void> task) {
+                        public void onComplete(Task<Void> task) {
                             Log.e("Rate Flow", "Complete");
                         }
                     });
@@ -472,7 +506,8 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
     @Override
     public void onBackPressed(){
      // super.onBackPressed();
-      confirmExit();
+        super.onBackPressed();
+        confirmExit();
     }
 
     @Override

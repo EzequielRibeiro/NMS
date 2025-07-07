@@ -14,12 +14,15 @@ import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.BillingClientStateListener;
 import com.android.billingclient.api.BillingFlowParams;
 import com.android.billingclient.api.BillingResult;
+import com.android.billingclient.api.PendingPurchasesParams;
 import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.ProductDetailsResponseListener;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchasesResponseListener;
 import com.android.billingclient.api.PurchasesUpdatedListener;
 import com.android.billingclient.api.QueryProductDetailsParams;
+import com.android.billingclient.api.QueryProductDetailsResult;
+import com.android.billingclient.api.QueryPurchasesParams;
 import com.android.billingclient.api.SkuDetails;
 import com.android.billingclient.api.SkuDetailsParams;
 import com.google.common.collect.ImmutableList;
@@ -77,7 +80,7 @@ public class Purchases{
 
         billingClient = BillingClient.newBuilder(context)
                 .setListener(purchasesUpdatedListener)
-                .enablePendingPurchases()
+                .enablePendingPurchases(PendingPurchasesParams.newBuilder().enableOneTimeProducts().build())
                 .build();
 
 
@@ -160,6 +163,11 @@ public class Purchases{
         billingClient.queryProductDetailsAsync(
                 params,
                 new ProductDetailsResponseListener() {
+                    @Override
+                    public void onProductDetailsResponse(@NonNull BillingResult billingResult, @NonNull QueryProductDetailsResult queryProductDetailsResult) {
+
+                    }
+
                     public void onProductDetailsResponse(BillingResult billingResult, List<ProductDetails> productDetailsList) {
                         try {
                             if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
@@ -188,11 +196,11 @@ public class Purchases{
         SkuDetailsParams.Builder params = SkuDetailsParams.newBuilder();
         params.setSkusList(skuList).setType(BillingClient.SkuType.INAPP);
 
-            billingClient.queryPurchasesAsync(BillingClient.SkuType.INAPP, new PurchasesResponseListener() {
+            billingClient.queryPurchasesAsync(QueryPurchasesParams.newBuilder().build(), new PurchasesResponseListener() {
                 @Override
                 public void onQueryPurchasesResponse(@NonNull BillingResult billingResult, @NonNull List<Purchase> list) {
 
-                    if (list.size() > 0) {
+                    if (!list.isEmpty()) {
                         for (Purchase p : list)
                             handlePurchase(p);
                     } else {
