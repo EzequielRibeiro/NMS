@@ -80,7 +80,6 @@ import java.util.Objects;
 public class MainActivity extends AppCompatActivity implements PurchasesUpdatedListener {
 
     public static InterstitialAd mInterstitialAd;
-    private FirebaseAnalytics mFirebaseAnalytics;
     private AdView mAdView;
     private boolean showAd = true;
     private BillingClient billingClient;
@@ -102,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
         FloatingActionButton fab = findViewById(R.id.fab);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         sharedPreferences = getSharedPreferences("noad", Context.MODE_PRIVATE);
         
      /*
@@ -306,190 +305,6 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
     }
 
 
- /*   private void billingSetup() {
-
-        billingClient = BillingClient.newBuilder(this)
-                .setListener(this)
-                .enablePendingPurchases(PendingPurchasesParams.newBuilder().enableOneTimeProducts().build())
-                .enableAutoServiceReconnection()
-                .build();
-
-        billingClient.startConnection(new BillingClientStateListener() {
-
-            @Override
-            public void onBillingSetupFinished(
-                    @NonNull BillingResult billingResult) {
-
-                if (billingResult.getResponseCode() ==
-                        BillingClient.BillingResponseCode.OK) {
-                    Log.i("NMS", "OnBillingSetupFinish connected");
-                    queryProduct();
-                } else {
-                    Log.i("NMS", "OnBillingSetupFinish failed");
-                }
-            }
-
-            @Override
-            public void onBillingServiceDisconnected() {
-                Log.i("NMS", "OnBillingSetupFinish connection lost");
-            }
-        });
-    }
-
-    private void queryProduct() {
-
-        QueryProductDetailsParams queryProductDetailsParams =
-                QueryProductDetailsParams.newBuilder()
-                        .setProductList(
-                                ImmutableList.of(
-                                        QueryProductDetailsParams.Product.newBuilder()
-                                                .setProductId("removead1")
-                                                .setProductType(
-                                                        BillingClient.ProductType.INAPP)
-                                                .build()))
-
-                        .build();
-
-        billingClient.queryProductDetailsAsync(
-                queryProductDetailsParams,
-                new ProductDetailsResponseListener() {
-
-                    @Override
-                    public void onProductDetailsResponse(@NonNull BillingResult billingResult, @NonNull QueryProductDetailsResult queryProductDetailsResult) {
-
-                        if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK){
-                            Log.d("NMS", "Billing response OK");
-                            productDetails = queryProductDetailsResult.getProductDetailsList().get(0);
-                        } else{
-                            Log.e("NMS", billingResult.getDebugMessage());
-                            billingSetup();
-
-                        }
-                    }
-
-                    public void onProductDetailsResponse(
-                            @NonNull BillingResult billingResult,
-                            @NonNull List<ProductDetails> productDetailsList) {
-
-                        if (!productDetailsList.isEmpty()) {
-                            productDetails = productDetailsList.get(0);
-
-                        } else {
-                            Log.i("NMS", "onProductDetailsResponse: No products");
-                        }
-                    }
-                }
-        );
-    }
-
-    public void makePurchase() {
-
-        BillingFlowParams billingFlowParams;
-
-
-        ImmutableList<BillingFlowParams.ProductDetailsParams> productDetailsParamsList =
-                ImmutableList.of(
-                        BillingFlowParams.ProductDetailsParams.newBuilder()
-                                // retrieve a value for "productDetails" by calling queryProductDetailsAsync()
-                                .setProductDetails(productDetails)
-                                // Get the offer token:
-                                // a. For one-time products, call ProductDetails.getOneTimePurchaseOfferDetailsList()
-                                // for a list of offers that are available to the user.
-                                // b. For subscriptions, call ProductDetails.subscriptionOfferDetails()
-                                // for a list of offers that are available to the user.
-
-                                .build()
-                );
-
-
-
-
-        billingFlowParams = BillingFlowParams.newBuilder()
-                .setProductDetailsParamsList(productDetailsParamsList)
-                .build();
-
-// Launch the billing flow
-        BillingResult billingResult = billingClient.launchBillingFlow(MainActivity.this, billingFlowParams);
-    }
-
-    public void checkPurchase() {
-
-        billingClient.queryPurchasesAsync(
-                QueryPurchasesParams.newBuilder()
-                        .setProductType(BillingClient.ProductType.INAPP)
-                        .build(),
-                new PurchasesResponseListener() {
-                    public void onQueryPurchasesResponse(BillingResult billingResult, @NonNull List<Purchase> purchases) {
-                        if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK
-                                && purchases != null) {
-                            for (Purchase purchase : purchases) {
-                                handlePurchase(purchase);
-                            }
-                        }
-
-                    }
-                }
-        );
-
-    }
-
-    @Override
-    public void onPurchasesUpdated(BillingResult billingResult,
-                                   List<Purchase> purchases) {
-
-        if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK
-                && purchases != null) {
-            for (Purchase purchase : purchases) {
-                handlePurchase(purchase);
-            }
-        } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.USER_CANCELED) {
-            Log.i("billingResultCan", "canceled");
-            sharedPreferences.edit().putBoolean("enableAd", true).apply();
-        } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED) {
-            Log.i("billingResultCan", "ITEM_ALREADY_OWNED");
-            sharedPreferences.edit().putBoolean("enableAd", false).apply();
-        }
-    }
-
-
-    private void handlePurchase(Purchase purchase) {
-
-        AcknowledgePurchaseResponseListener acknowledgePurchaseResponseListener = new AcknowledgePurchaseResponseListener() {
-            @Override
-            public void onAcknowledgePurchaseResponse(BillingResult billingResult) {
-
-                if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
-
-                    if (purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {
-                        sharedPreferences.edit().putBoolean("enableAd", false).apply();
-                        Log.i("billingResult", "ITEM_OWNED PURCHASED");
-                    }
-                } else if (purchase.getPurchaseState() == Purchase.PurchaseState.UNSPECIFIED_STATE) {
-                    sharedPreferences.edit().putBoolean("enableAd", true).apply();
-                    Log.i("billingResult", "ITEM_NOT_OWNED UNSPECIFIED_STATE");
-
-                } else if (purchase.getPurchaseState() == Purchase.PurchaseState.PENDING) {
-                    sharedPreferences.edit().putBoolean("enableAd", true).apply();
-                    Log.i("billingResult", "ITEM_NOT_OWNED PurchaseState.PENDING");
-                }
-            }
-
-
-        };
-        if (purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {
-            if (!purchase.isAcknowledged()) {
-                AcknowledgePurchaseParams acknowledgePurchaseParams =
-                        AcknowledgePurchaseParams.newBuilder()
-                                .setPurchaseToken(purchase.getPurchaseToken())
-                                .build();
-                billingClient.acknowledgePurchase(acknowledgePurchaseParams, acknowledgePurchaseResponseListener);
-            }
-        } else {
-            sharedPreferences.edit().putBoolean("enableAd", true).apply();
-            Log.i("billingResult", "ITEM_NOT_OWNED");
-        }
-    }*/
-
     private void loadAd() {
         mAdView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
@@ -634,13 +449,12 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
 
     public void onResume() {
         super.onResume();
-
+        checkSubscription();
         showAd = getSharedPreferences("noad", MODE_PRIVATE).getBoolean("enableAd", true);
         if (showAd) {
             loadAdInter(getApplicationContext());
             loadAd();
         }
-
 
     }
 
