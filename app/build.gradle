@@ -18,8 +18,10 @@ android {
 
     defaultConfig {
         applicationId "com.portaladdress.nms"
-        minSdkVersion 33
         versionCode 22
+        minSdk 23
+        //noinspection OldTargetApi
+        targetSdk 35
         versionName "1.22"
         multiDexEnabled true
 
